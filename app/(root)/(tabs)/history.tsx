@@ -1,12 +1,12 @@
 import { Text, View } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const Guide = () => {
+const History = () => {
     return(
         <SafeAreaView>
-            <Text>Guide</Text>
+            <Text>History</Text>
         </SafeAreaView>
     )
 }
 
-export default Guide;
+export default History;
