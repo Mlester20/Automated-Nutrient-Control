@@ -1,6 +1,6 @@
 import { Text, View, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import Swiper from 'react-native-swiper';
 import { useRef, useState } from 'react';
 import { onboarding } from '@/constants';
@@ -52,8 +52,8 @@ const OnBoarding = () => {
             <CustomButton
                 title={isLastSlide ? "Get Started" : "Next"} 
                 onPress={() =>
-                    isLastSlide 
-                    ? router.push('/(auth)/sign-up')
+                    isLastSlide
+                      ? router.push('/(root)/(tabs)/home')
                     : swiperRef.current?.scrollBy(1)
                 }
                 className='w-11/12 mt-10'
