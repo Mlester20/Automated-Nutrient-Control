@@ -27,22 +27,19 @@ import check from "@/assets/images/check.png";
 import getStarted from "@/assets/images/get-started.png";
 import message from "@/assets/images/message.png";
 import noResult from "@/assets/images/no-result.png";
-import onboarding1 from "@/assets/images/onboarding1.png";
-import onboarding2 from "@/assets/images/onboarding2.png";
-import onboarding3 from "@/assets/images/onboarding3.png";
-import onboarding4 from "@/assets/images/onboarding4.png";
-import signUpCar from "@/assets/images/signup-car.png";
+import books from "@/assets/icons/books.png";
 import photo from '@/assets/images/photo.png';
-import onboarding5 from '@/assets/images/onboarding5.png'
-import onboarding6 from '@/assets/images/onboarding6.png'
-import onboarding7 from '@/assets/images/onboarding7.png'
+import onboarding5 from '@/assets/images/onboarding5.png';
+import onboarding6 from '@/assets/images/onboarding6.png';
+import onboarding7 from '@/assets/images/onboarding7.png';
+import calculate from '@/assets/icons/calculate.png';
+import history from '@/assets/icons/history.png';
 
 export const images = {
   onboarding5,
   onboarding6,
   onboarding7,
   getStarted,
-  signUpCar,
   check,
   noResult,
   message,
@@ -75,6 +72,9 @@ export const icons = {
   star,
   target,
   to,
+  calculate,
+  books,
+  history
 };
 
 
