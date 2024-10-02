@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Home = () => {
-    return <Redirect href='/(root)/(tabs)/home' />
+    return <Redirect href='/(auth)/welcome' />
 }
 
 export default Home;
