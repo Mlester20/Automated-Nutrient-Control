@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Text, View, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Faq } from '@/constants/Faq'; // Assuming Faq.ts is in the constants folder
+import { Faq } from '@/constants/Faq';
+import { welcome } from '@/constants/welcome'; // Import welcome message
 
 const Home = () => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -20,8 +21,18 @@ const Home = () => {
     return (
         <SafeAreaView className="flex-1 bg-green-50">
             <ScrollView className="p-4">
-                <Text className="text-md font-JakartaBold mb-6 text-center">FAQ</Text>
-                
+
+                {/* Display the welcome message */}
+                {welcome.map((item) => (
+                    <View key={item.id} className="bg-green-100 p-4 rounded-lg mb-6 shadow-md">
+                        <Text className="text-lg font-bold text-center text-green-800">{item.title}</Text>
+                        <Text className="text-sm text-center text-green-600 mt-2">{item.description}</Text>
+                    </View>
+                ))}
+
+                {/* FAQ Section */}
+                <Text className="text-md font-JakartaBold mb-6 mt-6 text-center">FAQ</Text>
+
                 <View className="flex flex-row flex-wrap justify-between">
                     {Faq.map(item => (
                         <TouchableOpacity 

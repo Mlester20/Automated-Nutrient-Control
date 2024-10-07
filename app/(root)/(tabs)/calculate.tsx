@@ -17,7 +17,7 @@ const Calculate = () => {
   return (
     <SafeAreaView>
         <View className="p-5">
-        <Text className="text-lg font-JakartaMedium mb-3 text-center">Select Live Stock & Stage</Text>
+        <Text className="text-lg font-JakartaMedium mb-3 text-center mt-8">Select Live Stock & Stage</Text>
 
         <View className="flex-row justify-between mb-5 mt-5">
             {/* LiveStock Dropdown */}
@@ -50,7 +50,7 @@ const Calculate = () => {
         </View>
 
         {/* Display selected values and targeted crude protein */}
-        <View className="mt-5">
+        <View className='mt-5'>
             <Text className="text-md mb-1 text-center">
             Selected Live Stock: {selectedLiveStock || 'None'} || Selected Stage: {selectedStage || 'None'}
             </Text>
