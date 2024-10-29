@@ -82,7 +82,7 @@ const Calculate = () => {
               style={{ flex: 1, height: 50, marginRight: 10 }}
               className='border border-green-200 rounded-lg bg-gray-100'
             >
-              <Picker.Item label='Energy Ingredient 1' value="" />
+              <Picker.Item label='Ingredients' value="" />
               {Energy.map(item => (
                 <Picker.Item key={item.id} label={item.title} value={item.title} />
               ))}
@@ -95,7 +95,7 @@ const Calculate = () => {
               style={{ flex: 1, height: 50 }}
               className='border border-green-200 rounded-lg bg-gray-100'
             >
-              <Picker.Item label='Energy Ingredient 2' value="" />
+              <Picker.Item label='Ingredients' value="" />
               {filteredEnergy.map(item => (
                 <Picker.Item key={item.id} label={item.title} value={item.title} />
               ))}
