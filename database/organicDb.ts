@@ -1,5 +1,20 @@
-import * as Sqlite from 'expo-sqlite';
+import {
+    enablePromise,
+    openDatabase,
+  } from "react-native-sqlite-storage"
+  
+  // Enable promise for SQLite
+  enablePromise(true)
+  
+  export const Connection = async () => {
+    return openDatabase(
+      { name: "organicDb.db", location: "default" },
+      () => {},
+      (error) => {
+        console.error(error)
+        throw Error("Could not connect to database")
+      }
+    )
+  }
 
-const db = Sqlite.openDatabaseSync("organicDb.db");
-
-export default db;
+export default Connection;

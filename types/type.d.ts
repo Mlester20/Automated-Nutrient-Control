@@ -19,3 +19,12 @@ declare interface InputFieldProps extends TextInputProps {
   iconStyle?: string;
   className?: string;
 }
+
+declare interface InputsProps extends TextInputProps{
+  label: string;
+  secureTextEntry: boolean;
+  labelStyle?: string;
+  containerStyle?: string;
+  inputStyle?: string;
+  className?: string;
+}
