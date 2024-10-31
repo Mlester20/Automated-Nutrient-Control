@@ -29,16 +29,14 @@ import message from "@/assets/images/message.png";
 import noResult from "@/assets/images/no-result.png";
 import books from "@/assets/icons/books.png";
 import photo from '@/assets/images/photo.png';
-import onboarding5 from '@/assets/images/onboarding5.png';
-import onboarding6 from '@/assets/images/onboarding6.png';
-import onboarding7 from '@/assets/images/onboarding7.png';
 import calculate from '@/assets/icons/calculate.png';
 import history from '@/assets/icons/history.png';
+import onboarding9 from '@/assets/images/onboarding9.png';
+import onboarding10 from '@/assets/images/onboarding10.png';
 
 export const images = {
-  onboarding5,
-  onboarding6,
-  onboarding7,
+  onboarding9,
+  onboarding10,
   getStarted,
   check,
   noResult,
@@ -84,21 +82,14 @@ export const onboarding = [
       title: "Calculate the perfect feed for your livestock!",
       description:
         "Easily calculate the right blend of ingredients for optimal livestock nutrition.",
-      image: images.onboarding5,
+      image: images.onboarding9,
     },
     {
       id: 2,
       title: "Organic feeding made easy",
       description:
         "Select your livestock’s details and get accurate crude nutrients with organic ingredients.",
-      image: images.onboarding6,
-    },
-    {
-      id: 3,
-      title: "Nourish your livestock, naturally",
-      description:
-        "Let us help you create balanced, protein-rich diets for healthier and stronger livestock.",
-      image: images.onboarding7,
+      image: images.onboarding10,
     },
   ];
   

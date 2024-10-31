@@ -15,7 +15,7 @@ const OnBoarding = () => {
     return(
         <SafeAreaView className='flex h-full items-center justify-between bg-white'>
             <TouchableOpacity onPress={() => {
-                router.replace('/(auth)/sign-up');
+                router.replace('/(root)/(tabs)/home');
             }}
                 className='w-full flex justify-items-end items-end p-5'
             >

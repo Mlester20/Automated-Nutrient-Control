@@ -31,10 +31,10 @@ const Calculate = () => {
   const filteredProtein = Protein.filter(item=> item.title !== selectedProtein1);
 
   return (
-    <ScrollView className='flex-1 bg-green-50 p-5 w-full h-[100%]'>
-      <SafeAreaView>
+    <ScrollView>
+      <SafeAreaView className='flex-1 bg-gray-100'>
         <View className="p-5">
-          <Text className="text-lg font-JakartaMedium mb-3 text-center mt-8 text-green-800 shadow-md">Select Live Stock & Stage</Text>
+          <Text className="text-lg font-JakartaMedium mb-3 text-center mt-8 text-gray-500">Select Live Stock & Stage</Text>
 
           <View className="flex-row justify-between mb-5 mt-5">
             {/* LiveStock Dropdown */}
@@ -68,7 +68,7 @@ const Calculate = () => {
 
           {/* Display selected values and targeted crude protein */}
           <View className='mt-5'>
-            <Text className="text-md mb-1 text-center text-green-800">
+            <Text className="text-md mb-1 text-center text-gray-600">
               Selected Live Stock: {selectedLiveStock || 'None'} || Selected Stage: {selectedStage || 'None'}
             </Text>
             {selectedStage && (
@@ -80,8 +80,8 @@ const Calculate = () => {
 
           {/* Energy Source Selection (Two Pickers) */}
           <View className='mt-10 px-4'>
-            <Text className='text-md font-JakartaMedium text-center mb-2 text-green-800'>Select Ingredients For Energy Source</Text>
-            <View className='flex-row justify-between border-gray-300'>
+            <Text className='text-md font-JakartaMedium text-center mb-2 text-gray-500'>Select Ingredients For Energy Source</Text>
+            <View className='flex-row justify-between'>
               {/* First Energy Source Picker */}
               <Picker
                 selectedValue={selectedEnergy1}
@@ -115,7 +115,7 @@ const Calculate = () => {
           </View>
 
           <View className='mt-10 px-4'>
-            <Text className='text-md font-JakartaMedium text-center mb-2 text-green-800'>Select Ingredients For Protein Source</Text>
+            <Text className='text-md font-JakartaMedium text-center mb-2 text-gray-500'>Select Ingredients For Protein Source</Text>
             <View className='flex-row justify-between'>
               {/* First Protein Source Picker */}
               <Picker
