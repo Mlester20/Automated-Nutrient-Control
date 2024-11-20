@@ -201,7 +201,7 @@ const Calculate = () => {
                 </Text>
                 {Object.entries(ingredientQuantities).map(([ingredient, weight]) => (
                   <Text key={ingredient} className="text-gray-600 mb-2">
-                    {ingredient}: {weight}kg - Shared Crude Protein: {weight * 0.15}%
+                    {ingredient}: {weight}kg - Shared Crude Protein: {weight * 0.15} (15%)
                   </Text>
                 ))}
                 <Text className="text-center mt-4 text-green-600 font-bold">
