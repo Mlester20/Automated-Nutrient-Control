@@ -7,12 +7,12 @@ export const Stage = [
     {
         id: 2,
         stage: 'Finisher',
-        targetProtein: '13-15%'
+        targetProtein: '13-14%'
     },
     {
         id: 3,
         stage: 'Grower',
-        targetProtein: '16-17%'
+        targetProtein: '18-19%'
     },
 ]
 

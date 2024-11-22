@@ -1,11 +1,34 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, ScrollView, Button, Modal } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, Button, Modal, Alert, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { LiveStock } from '@/constants/LiveStock';
 import { Stage } from '@/constants/Stage';
 import { Energy } from '@/constants/energyIngredients';
 import { Protein } from '@/constants/proteinIngredients';
 import IngredientQuantityInput from '@/components/IngredientQuantityInput';
+import {
+  calculateBoneMealSCP,
+  calculateKangkongProteinSCP,
+  calculateFishMealSCP,
+  calculateCopraMealSCP,
+  calculateSoybeanMealSCP,
+  calculateSweetPotatoProteinSCP,
+  calculateIpilIpilLeafMealSCP,
+  calculateCornGritsEnergy,
+  calculateSweetPotatoEnergy,
+  calculateRiceBranEnergy,
+  calculateMolassesEnergy,
+  calculateRiceMiddlingEnergy,
+  calculateRensoniiEnergy,
+  calculateIpilIpilEnergy,
+  calculateKakawatiEnergy,
+  calculateKangkongEnergy,
+  calculateGabiEnergy,
+  calculateMadreDeAguaEnergy,
+  calculateIndigoferaEnergy,
+  calculateNapierEnergy,
+  calculateManiManihanEnergy
+} from '@/formulations/calculateLogic.ts';
 
 const Calculate = () => {
   const [selectedLiveStock, setSelectedLiveStock] = useState<string | undefined>();
@@ -16,6 +39,8 @@ const Calculate = () => {
   const [selectedProtein2, setSelectedProtein2] = useState<string | undefined>();
   const [ingredientQuantities, setIngredientQuantities] = useState<{ [key: string]: number }>({});
   const [modalVisible, setModalVisible] = useState(false);
+  const [guideModalVisible, setGuideModalVisible] = useState(false);
+  const [onClose, setOnClose] = useState(false);
 
   // Function to get the target crude protein for the selected stage
   const getTargetProtein = (stage: string) => {
@@ -32,16 +57,75 @@ const Calculate = () => {
     setIngredientQuantities((prev) => ({ ...prev, [ingredient]: weight }));
   };
 
-  // Calculate shared crude protein
+  // Dynamic function to calculate the crude protein based on the selected ingredient
+  const calculateIngredientCrudeProtein = (ingredient: string, weight: number) => {
+    switch (ingredient) {
+        case 'Bone Meal':
+            return calculateBoneMealSCP(weight);
+        case 'Kangkong':
+            return calculateKangkongProteinSCP(weight);
+        case 'Fish Meal':
+            return calculateFishMealSCP(weight);
+        case 'Copra Meal':
+            return calculateCopraMealSCP(weight);
+        case 'Soybean Meal':
+            return calculateSoybeanMealSCP(weight);
+        case 'Sweet Potato':
+            return calculateSweetPotatoProteinSCP(weight);
+        case 'Ipil Ipil':
+            return calculateIpilIpilLeafMealSCP(weight);
+        case 'Corn Grits':
+            return calculateCornGritsEnergy(weight); //energy calculation
+        case 'Rice Bran':
+            return calculateRiceBranEnergy(weight);
+        case 'Molasses':
+            return calculateMolassesEnergy(weight);
+        case 'Rice Middling':
+            return calculateRiceMiddlingEnergy(weight);
+        case 'Rensonii':
+            return calculateRensoniiEnergy(weight);
+        case 'Kakawati':
+            return calculateKakawatiEnergy(weight);
+        case 'Gabi':
+            return calculateGabiEnergy(weight);
+        case 'Madre De Agua':
+            return calculateMadreDeAguaEnergy(weight);
+        case 'Indigofera':
+            return calculateIndigoferaEnergy(weight);
+        case 'Napier':
+            return calculateNapierEnergy(weight);
+        case 'Mani Manihan':
+            return calculateManiManihanEnergy(weight);
+        default:
+            return 0; // Default value if the'res no match in Ingredients
+    }
+};
+
+
+  // Calculate total crude protein
   const calculateCrudeProtein = () => {
-    // Example logic (replace with your calculation logic)
     let totalProtein = 0;
     for (const ingredient in ingredientQuantities) {
       const weight = ingredientQuantities[ingredient];
-      totalProtein += weight * 0.15; // Assuming 15% protein as an example
+      totalProtein += calculateIngredientCrudeProtein(ingredient, weight);
     }
     return totalProtein.toFixed(2);
   };
+
+  // Check if crude protein meets the target
+  const checkCrudeProtein = () => {
+    const totalProtein = parseFloat(calculateCrudeProtein());
+    const targetProtein = parseFloat(getTargetProtein(selectedStage!) || '0');
+
+    if (totalProtein < targetProtein) {
+      return `The total crude protein (${totalProtein}%) is below the targeted crude protein (${targetProtein}%). Please consider increasing the quantity of one or more ingredients.`;
+    }else if (totalProtein > targetProtein){
+      return `The total crude protein (${totalProtein}%) is higher the targeted crude protein (${targetProtein}%). Please consider lowering the quantity of one or more ingredients.`;
+    }
+    return `The total crude protein (${totalProtein}%) meets the targeted crude protein (${targetProtein}%).`;
+  };
+
+  
 
   return (
     <ScrollView className="flex-1 bg-green-50 p-5 w-full h-[100%]">
@@ -165,7 +249,6 @@ const Calculate = () => {
             </View>
           </View>
 
-          {/* Quantity Inputs */}
           <View className="mt-10 px-4">
             <Text className="text-md font-JakartaMedium text-center mb-2 text-green-800">
               Enter Quantity for Selected Ingredients
@@ -184,33 +267,45 @@ const Calculate = () => {
             </View>
           </View>
 
-          {/* Calculate Button */}
-          <Button title="Calculate" onPress={() => setModalVisible(true)} />
-
-          {/* Modal for Calculation Results */}
-          <Modal
-            visible={modalVisible}
-            transparent={true}
-            animationType="slide"
-            onRequestClose={() => setModalVisible(false)}
-          >
-            <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
-              <View className="bg-white rounded-lg p-5 w-[80%]">
-                <Text className="text-lg font-bold mb-3 text-center text-green-800">
-                  Calculation Results
+          {/* Display Shared Crude Protein and Total Average */}
+          {Object.keys(ingredientQuantities).length > 0 && (
+            <View className="mt-8 px-4 py-4 bg-white rounded-lg shadow-lg">
+              <Text className="text-lg font-JakartaMedium text-green-800 mb-4 text-center">
+                Shared Crude Protein per Ingredient
+              </Text>
+              <View>
+                {Object.entries(ingredientQuantities).map(([ingredient, weight]) => {
+                  const sharedCrudeProtein = calculateIngredientCrudeProtein(ingredient, weight);
+                  return (
+                    <View key={ingredient} className="flex-row justify-between mb-2">
+                      <Text className="text-md font-JakartaMedium text-gray-600">{ingredient}:</Text>
+                      <Text className="text-md font-JakartaMedium text-gray-800">
+                        {weight}kg - {sharedCrudeProtein.toFixed(2)}%
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+              <View className="mt-4 border-t border-gray-300 pt-4">
+                <Text className="text-md font-JakartaMedium text-center text-gray-800">
+                  Total Average Shared Crude Protein: {(
+                    Object.entries(ingredientQuantities).reduce((total, [ingredient, weight]) => {
+                      return total + calculateIngredientCrudeProtein(ingredient, weight);
+                    }, 0) / Object.keys(ingredientQuantities).length
+                  ).toFixed(2)}%
                 </Text>
-                {Object.entries(ingredientQuantities).map(([ingredient, weight]) => (
-                  <Text key={ingredient} className="text-gray-600 mb-2">
-                    {ingredient}: {weight}kg - Shared Crude Protein: {weight * 0.15}%
-                  </Text>
-                ))}
-                <Text className="text-center mt-4 text-green-600 font-bold">
-                  Total Crude Protein: {calculateCrudeProtein()}%
+                <Text>
                 </Text>
-                <Button title="Close" onPress={() => setModalVisible(false)} />
               </View>
             </View>
-          </Modal>
+          )}
+
+          {/* Calculate Button */}
+          <Button title="Calculate" onPress={() => {
+            const resultMessage = checkCrudeProtein();
+            Alert.alert('Calculation Result', resultMessage);
+            setModalVisible(true);
+          }} />
         </View>
       </SafeAreaView>
     </ScrollView>
