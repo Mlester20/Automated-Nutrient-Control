@@ -72,7 +72,7 @@ const Calculate = () => {
             return calculateSoybeanMealSCP(weight);
         case 'Sweet Potato':
             return calculateSweetPotatoProteinSCP(weight);
-        case 'Ipil Ipil':
+        case 'Ipil Ipil Leaf Meal':
             return calculateIpilIpilLeafMealSCP(weight);
         case 'Corn Grits':
             return calculateCornGritsEnergy(weight); //energy calculation
@@ -125,19 +125,30 @@ const Calculate = () => {
     return `The total crude protein (${totalProtein}%) meets the targeted crude protein (${targetProtein}%).`;
   };
 
+  //function to reset all the selection
+  const resetSelections = () => {
+    setSelectedLiveStock(undefined);
+    setSelectedStage(undefined);
+    setSelectedEnergy1(undefined);
+    setSelectedEnergy2(undefined);
+    setSelectedProtein1(undefined);
+    setSelectedProtein2(undefined);
+    setIngredientQuantities({});
+    Alert.alert("Reset", "All selections have been cleared.");
+  };
   
 
   return (
-    <ScrollView className="flex-1 bg-green-50 p-5 w-full h-[100%]">
+    <ScrollView className="flex-1 mt-10 bg-green-50 p-5 w-full h-[100%]">
       <SafeAreaView>
-        <View className="p-5">
+        <View className="p-5 bg-white rounded-lg">
           <Text className="text-lg font-JakartaMedium mb-3 text-center mt-8 text-green-800 shadow-md">
             Select Live Stock & Stage
           </Text>
 
           {/* Livestock and Stage Dropdowns */}
           <View className="flex-row justify-between mb-5 mt-5">
-            <View className="flex-1 border border-gray-300 rounded-lg bg-gray-100 mr-2 p-2">
+            <View className="flex-1 border border-green-300 rounded-lg bg-gray-100 mr-2 p-2 shadow-sm">
               <Picker
                 selectedValue={selectedLiveStock}
                 onValueChange={(itemValue: string) => setSelectedLiveStock(itemValue)}
@@ -150,7 +161,7 @@ const Calculate = () => {
               </Picker>
             </View>
 
-            <View className="flex-1 border border-gray-300 rounded-lg bg-gray-100 p-2">
+            <View className="flex-1 border border-green-300 rounded-lg bg-gray-100 p-2">
               <Picker
                 selectedValue={selectedStage}
                 onValueChange={(itemValue: string) => setSelectedStage(itemValue)}
@@ -269,7 +280,7 @@ const Calculate = () => {
 
           {/* Display Shared Crude Protein and Total Average */}
           {Object.keys(ingredientQuantities).length > 0 && (
-            <View className="mt-8 px-4 py-4 bg-white rounded-lg shadow-lg">
+            <View className="mt-8 px-4 py-4 bg-blue-100 rounded-md shadow-lg">
               <Text className="text-lg font-JakartaMedium text-green-800 mb-4 text-center">
                 Shared Crude Protein per Ingredient
               </Text>
@@ -291,7 +302,7 @@ const Calculate = () => {
                   Total Average Shared Crude Protein: {(
                     Object.entries(ingredientQuantities).reduce((total, [ingredient, weight]) => {
                       return total + calculateIngredientCrudeProtein(ingredient, weight);
-                    }, 0) / Object.keys(ingredientQuantities).length
+                    }, 0)
                   ).toFixed(2)}%
                 </Text>
                 <Text>
@@ -300,12 +311,29 @@ const Calculate = () => {
             </View>
           )}
 
-          {/* Calculate Button */}
-          <Button title="Calculate" onPress={() => {
-            const resultMessage = checkCrudeProtein();
-            Alert.alert('Calculation Result', resultMessage);
-            setModalVisible(true);
-          }} />
+          <View className="flex-1 justify-center items-center p-4">
+              <View className="flex-row space-x-4">
+                {/* Calculate Button */}
+                <TouchableOpacity
+                  onPress={() => {
+                    const resultMessage = checkCrudeProtein();
+                    Alert.alert("Calculation Result", resultMessage);
+                  }}
+                  className="px-4 py-2 bg-blue-500 rounded"
+                >
+                  <Text className="text-white font-medium">View Result</Text>
+                </TouchableOpacity>
+
+                {/* Reset Button */}
+                <TouchableOpacity
+                  onPress={resetSelections}
+                  className="px-4 py-2 bg-red-500 rounded"
+                >
+                  <Text className="text-white font-medium">RESET</Text>
+                </TouchableOpacity>
+              </View>
+          </View>
+
         </View>
       </SafeAreaView>
     </ScrollView>

@@ -24,7 +24,7 @@ export const Protein = [
         title: 'Sweet Potato'
     },
     {
-        id: 7,
+        id: 6,
         title: 'Ipil Ipil Leaf Meal'
     },
 ];

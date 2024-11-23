@@ -19,20 +19,17 @@ const Home = () => {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-green-50">
-            <ScrollView className="p-4">
-
-                {/* Display the welcome message */}
+        <SafeAreaView className="flex-1 bg-green-50 rounded-lg">
+            <ScrollView className="p-4 bg-green-50 rounded-lg">
                 {welcome.map((item) => (
                     <View key={item.id} className="bg-green-100 p-4 rounded-lg mb-6 shadow-md">
                         <Text className="text-lg font-bold text-center text-green-800">{item.title}</Text>
-                        <Text className="text-sm text-center text-green-600 mt-2">{item.description}</Text>
+                        <Text className="text-sm text-center text-black-600 mt-2">{item.description}</Text>
                     </View>
                 ))}
 
                 {/* FAQ Section */}
                 <Text className="text-md font-JakartaBold mb-6 mt-6 text-center">FAQ</Text>
-
                 <View className="flex flex-row flex-wrap justify-between">
                     {Faq.map(item => (
                         <TouchableOpacity 

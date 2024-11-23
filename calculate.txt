@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, ScrollView, Button, Modal, Alert } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, Button, Modal, Alert, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { LiveStock } from '@/constants/LiveStock';
 import { Stage } from '@/constants/Stage';
@@ -40,6 +40,7 @@ const Calculate = () => {
   const [ingredientQuantities, setIngredientQuantities] = useState<{ [key: string]: number }>({});
   const [modalVisible, setModalVisible] = useState(false);
   const [guideModalVisible, setGuideModalVisible] = useState(false);
+  const [onClose, setOnClose] = useState(false);
 
   // Function to get the target crude protein for the selected stage
   const getTargetProtein = (stage: string) => {
@@ -74,7 +75,7 @@ const Calculate = () => {
         case 'Ipil Ipil':
             return calculateIpilIpilLeafMealSCP(weight);
         case 'Corn Grits':
-            return calculateCornGritsEnergy(weight); // Example for energy calculation
+            return calculateCornGritsEnergy(weight); //energy calculation
         case 'Rice Bran':
             return calculateRiceBranEnergy(weight);
         case 'Molasses':
@@ -118,9 +119,24 @@ const Calculate = () => {
 
     if (totalProtein < targetProtein) {
       return `The total crude protein (${totalProtein}%) is below the targeted crude protein (${targetProtein}%). Please consider increasing the quantity of one or more ingredients.`;
+    }else if (totalProtein > targetProtein){
+      return `The total crude protein (${totalProtein}%) is higher the targeted crude protein (${targetProtein}%). Please consider lowering the quantity of one or more ingredients.`;
     }
     return `The total crude protein (${totalProtein}%) meets the targeted crude protein (${targetProtein}%).`;
   };
+
+  //function to reset all the selection
+  const resetSelections = () => {
+    setSelectedLiveStock(undefined);
+    setSelectedStage(undefined);
+    setSelectedEnergy1(undefined);
+    setSelectedEnergy2(undefined);
+    setSelectedProtein1(undefined);
+    setSelectedProtein2(undefined);
+    setIngredientQuantities({});
+    Alert.alert("Reset", "All selections have been cleared.");
+  };
+  
 
   return (
     <ScrollView className="flex-1 bg-green-50 p-5 w-full h-[100%]">
@@ -262,12 +278,53 @@ const Calculate = () => {
             </View>
           </View>
 
+          {/* Display Shared Crude Protein and Total Average */}
+          {Object.keys(ingredientQuantities).length > 0 && (
+            <View className="mt-8 px-4 py-4 bg-white rounded-lg shadow-lg">
+              <Text className="text-lg font-JakartaMedium text-green-800 mb-4 text-center">
+                Shared Crude Protein per Ingredient
+              </Text>
+              <View>
+                {Object.entries(ingredientQuantities).map(([ingredient, weight]) => {
+                  const sharedCrudeProtein = calculateIngredientCrudeProtein(ingredient, weight);
+                  return (
+                    <View key={ingredient} className="flex-row justify-between mb-2">
+                      <Text className="text-md font-JakartaMedium text-gray-600">{ingredient}:</Text>
+                      <Text className="text-md font-JakartaMedium text-gray-800">
+                        {weight}kg - {sharedCrudeProtein.toFixed(2)}%
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+              <View className="mt-4 border-t border-gray-300 pt-4">
+                <Text className="text-md font-JakartaMedium text-center text-gray-800">
+                  Total Average Shared Crude Protein: {(
+                    Object.entries(ingredientQuantities).reduce((total, [ingredient, weight]) => {
+                      return total + calculateIngredientCrudeProtein(ingredient, weight);
+                    }, 0) / Object.keys(ingredientQuantities).length
+                  ).toFixed(2)}%
+                </Text>
+                <Text>
+                </Text>
+              </View>
+            </View>
+          )}
+
           {/* Calculate Button */}
-          <Button title="Calculate" onPress={() => {
+          <Button 
+            title="Calculate" onPress={() => {
             const resultMessage = checkCrudeProtein();
             Alert.alert('Calculation Result', resultMessage);
             setModalVisible(true);
           }} />
+          {/* reset button
+          <TouchableOpacity
+            onPress={resetSelections}
+            className="px-6 py-3 bg-red-500 mt-2"
+          >
+            <Text className="text-white text-center font-JakartaMedium">RESET</Text>
+          </TouchableOpacity> */}
         </View>
       </SafeAreaView>
     </ScrollView>
