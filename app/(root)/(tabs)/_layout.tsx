@@ -91,9 +91,9 @@ export default function Layout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="reference"
         options={{
-          title: "Profile",
+          title: "Reference",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
             <TabIcon source={icons.profile} focused={focused} />

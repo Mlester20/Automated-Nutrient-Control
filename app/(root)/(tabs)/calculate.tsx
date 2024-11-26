@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, ScrollView, Button, Modal, Alert, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { LiveStock } from '@/constants/LiveStock';
@@ -6,6 +6,8 @@ import { Stage } from '@/constants/Stage';
 import { Energy } from '@/constants/energyIngredients';
 import { Protein } from '@/constants/proteinIngredients';
 import IngredientQuantityInput from '@/components/IngredientQuantityInput';
+import Footer from '@/components/Footer';
+import { FeedPreparationGuide } from '@/constants/FeedPreparation';
 import {
   calculateBoneMealSCP,
   calculateKangkongProteinSCP,
@@ -28,7 +30,7 @@ import {
   calculateIndigoferaEnergy,
   calculateNapierEnergy,
   calculateManiManihanEnergy
-} from '@/formulations/calculateLogic.ts';
+} from '@/formulations/calculateLogic';
 
 const Calculate = () => {
   const [selectedLiveStock, setSelectedLiveStock] = useState<string | undefined>();
@@ -38,9 +40,9 @@ const Calculate = () => {
   const [selectedProtein1, setSelectedProtein1] = useState<string | undefined>();
   const [selectedProtein2, setSelectedProtein2] = useState<string | undefined>();
   const [ingredientQuantities, setIngredientQuantities] = useState<{ [key: string]: number }>({});
-  const [modalVisible, setModalVisible] = useState(false);
-  const [guideModalVisible, setGuideModalVisible] = useState(false);
-  const [onClose, setOnClose] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  
 
   // Function to get the target crude protein for the selected stage
   const getTargetProtein = (stage: string) => {
@@ -101,6 +103,33 @@ const Calculate = () => {
     }
 };
 
+  //function for displaying organic kg and water intake of live stock and stage
+  const LivestockData = () => {
+    const stageData = Stage.find((item) => item.stage === selectedStage);
+  
+    if (stageData) {
+      return {
+        waterIntake: stageData.waterIntake,
+        feedIntakeRange: stageData.feedIntakeRange, // Using feedIntakeRange
+        morningFeed: stageData.morningFeed,
+        afternoonFeed: stageData.afternoonFeed,
+        eveningFeed: stageData.eveningFeed,
+        targetProtein: stageData.targetProtein,
+      };
+    }
+  
+    return {
+      waterIntake: "N/A",
+      feedIntakeRange: "N/A", // Default value
+      morningFeed: "N/A",
+      afternoonFeed: "N/A",
+      eveningFeed: "N/A",
+      targetProtein: "N/A",
+    };
+  };
+  
+  
+  
 
   // Calculate total crude protein
   const calculateCrudeProtein = () => {
@@ -112,18 +141,32 @@ const Calculate = () => {
     return totalProtein.toFixed(2);
   };
 
-  // Check if crude protein meets the target
   const checkCrudeProtein = () => {
     const totalProtein = parseFloat(calculateCrudeProtein());
-    const targetProtein = parseFloat(getTargetProtein(selectedStage!) || '0');
-
-    if (totalProtein < targetProtein) {
-      return `The total crude protein (${totalProtein}%) is below the targeted crude protein (${targetProtein}%). Please consider increasing the quantity of one or more ingredients.`;
-    }else if (totalProtein > targetProtein){
-      return `The total crude protein (${totalProtein}%) is higher the targeted crude protein (${targetProtein}%). Please consider lowering the quantity of one or more ingredients.`;
+  
+    // Find the selected stage's protein range
+    const selectedStageData = Stage.find((item) => item.stage === selectedStage);
+  
+    if (!selectedStageData) {
+      return `Invalid stage selected. Please select a valid stage.`;
     }
-    return `The total crude protein (${totalProtein}%) meets the targeted crude protein (${targetProtein}%).`;
+  
+    // Parse the targetProtein range (e.g., "18-20%" to { min: 18, max: 20 })
+    const [min, max] = selectedStageData.targetProtein
+      .replace('%', '') // Remove the percentage sign
+      .split('-') // Split into min and max values
+      .map(Number); // Convert to numbers
+  
+    // Check if the total protein is within the range
+    if (totalProtein < min) {
+      return `The total crude protein (${totalProtein}%) is below the targeted crude protein range (${min}% - ${max}%). Please consider increasing the quantity of one or more ingredients.`;
+    } else if (totalProtein > max) {
+      return `The total crude protein (${totalProtein}%) is higher than the targeted crude protein range (${min}% - ${max}%). Please consider lowering the quantity of one or more ingredients.`;
+    }
+    // If it's within the range
+    return `The total crude protein (${totalProtein}%) meets the targeted crude protein range (${min}% - ${max}%).`;
   };
+  
 
   //function to reset all the selection
   const resetSelections = () => {
@@ -298,44 +341,72 @@ const Calculate = () => {
                 })}
               </View>
               <View className="mt-4 border-t border-gray-300 pt-4">
-                <Text className="text-md font-JakartaMedium text-center text-gray-800">
-                  Total Average Shared Crude Protein: {(
-                    Object.entries(ingredientQuantities).reduce((total, [ingredient, weight]) => {
-                      return total + calculateIngredientCrudeProtein(ingredient, weight);
-                    }, 0)
-                  ).toFixed(2)}%
-                </Text>
-                <Text>
+                    <Text className="text-md font-JakartaMedium text-center text-gray-800">
+                      Total Average Shared Crude Protein: {(
+                        Object.entries(ingredientQuantities).reduce((total, [ingredient, weight]) => {
+                          return total + calculateIngredientCrudeProtein(ingredient, weight);
+                        }, 0)
+                      ).toFixed(2)}%
+                    </Text>
+                  <Text>
                 </Text>
               </View>
+              <Text>
+                {checkCrudeProtein()}
+              </Text>
             </View>
           )}
 
           <View className="flex-1 justify-center items-center p-4">
-              <View className="flex-row space-x-4">
-                {/* Calculate Button */}
-                <TouchableOpacity
-                  onPress={() => {
-                    const resultMessage = checkCrudeProtein();
-                    Alert.alert("Calculation Result", resultMessage);
-                  }}
-                  className="px-4 py-2 bg-blue-500 rounded"
-                >
-                  <Text className="text-white font-medium">View Result</Text>
-                </TouchableOpacity>
+            <View className="flex-row space-x-4">
+              {/* Calculate Button */}
+            <TouchableOpacity
+              onPress={() => {
+                if (selectedLiveStock && selectedStage) {
+                  const {
+                    waterIntake,
+                    feedIntakeRange,
+                    morningFeed,
+                    afternoonFeed,
+                    eveningFeed
+                  } = LivestockData();
 
-                {/* Reset Button */}
-                <TouchableOpacity
-                  onPress={resetSelections}
-                  className="px-4 py-2 bg-red-500 rounded"
-                >
-                  <Text className="text-white font-medium">RESET</Text>
-                </TouchableOpacity>
-              </View>
+                  Alert.alert(
+                    "Guide",
+                    `Results for ${selectedLiveStock}:\n\n` +
+                      `Stage: ${selectedStage}\n` +
+                      `Water Intake: ${waterIntake}\n` +
+                      `Feed Intake: ${feedIntakeRange} (Daily)\n` +
+                      `Morning: ${morningFeed}\n` +
+                      `Afternoon: ${afternoonFeed}\n` +
+                      `Evening: ${eveningFeed}\n\n` +
+                      FeedPreparationGuide
+                  );
+                } else {
+                  Alert.alert("Error", "Please select both livestock and stage.");
+                }
+              }}
+              className="mt-6 px-4 py-2 bg-blue-500 rounded"
+            >
+            <Text className="text-white font-medium">View Result</Text>
+          </TouchableOpacity>    
+
+
+
+              {/* Reset Button */}
+              <TouchableOpacity
+                onPress={resetSelections}
+                className="mt-6 px-4 py-2 bg-red-500 rounded"
+              >
+                <Text className="text-white font-medium">RESET</Text>
+              </TouchableOpacity>
+            </View>
           </View>
+
 
         </View>
       </SafeAreaView>
+      <Footer/>
     </ScrollView>
   );
 };
