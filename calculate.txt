@@ -6,8 +6,9 @@ import { Stage } from '@/constants/Stage';
 import { Energy } from '@/constants/energyIngredients';
 import { Protein } from '@/constants/proteinIngredients';
 import IngredientQuantityInput from '@/components/IngredientQuantityInput';
-import { feedRecommendations } from '@/constants/feedRecommendations';
 import Footer from '@/components/Footer';
+import { FeedPreparationGuide } from '@/constants/FeedPreparation';
+import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 import {
   calculateBoneMealSCP,
   calculateKangkongProteinSCP,
@@ -100,6 +101,33 @@ const Calculate = () => {
     }
 };
 
+  //function for displaying organic kg and water intake of live stock and stage
+  const LivestockData = () => {
+    const stageData = Stage.find((item) => item.stage === selectedStage);
+  
+    if (stageData) {
+      return {
+        waterIntake: stageData.waterIntake,
+        feedIntakeRange: stageData.feedIntakeRange, // Using feedIntakeRange
+        morningFeed: stageData.morningFeed,
+        afternoonFeed: stageData.afternoonFeed,
+        eveningFeed: stageData.eveningFeed,
+        targetProtein: stageData.targetProtein,
+      };
+    }
+  
+    return {
+      waterIntake: "N/A",
+      feedIntakeRange: "N/A", // Default value
+      morningFeed: "N/A",
+      afternoonFeed: "N/A",
+      eveningFeed: "N/A",
+      targetProtein: "N/A",
+    };
+  };
+  
+  
+  
 
   // Calculate total crude protein
   const calculateCrudeProtein = () => {
@@ -328,28 +356,51 @@ const Calculate = () => {
           )}
 
           <View className="flex-1 justify-center items-center p-4">
-              <View className="flex-row space-x-4">
-                {/* Calculate Button */}
+            <View className="flex-row space-x-4">
+              {/* Calculate Button */}
                 <TouchableOpacity
                   onPress={() => {
-                    const resultMessage = checkCrudeProtein();
-                    Alert.alert("Calculation Result", resultMessage);
+                    if (selectedLiveStock && selectedStage) {
+                      const {
+                        waterIntake,
+                        feedIntakeRange,
+                        morningFeed,
+                        afternoonFeed,
+                        eveningFeed
+                      } = LivestockData();
+
+                      Alert.alert(
+                        "Guide",
+                        `Results for ${selectedLiveStock}:\n\n` +
+                          `Stage: ${selectedStage}\n` +
+                          `Water Intake: ${waterIntake}\n` +
+                          `Feed Intake: ${feedIntakeRange} (Daily)\n` +
+                          `Morning: ${morningFeed}\n` +
+                          `Afternoon: ${afternoonFeed}\n` +
+                          `Evening: ${eveningFeed}\n\n` +
+                          FeedPreparationGuide
+                      );
+                    } else {
+                      Alert.alert("Error", "Please select both livestock and stage.");
+                    }
                   }}
-                  className="px-4 py-2 bg-blue-500 rounded"
+                  className="mt-6 px-4 py-2 bg-blue-500 rounded"
                 >
+                <Text className="text-white font-medium">View Guide</Text>
+              </TouchableOpacity>    
 
-                  <Text className="text-white font-medium">View Result</Text>
-                </TouchableOpacity>
 
-                {/* Reset Button */}
-                <TouchableOpacity
-                  onPress={resetSelections}
-                  className="px-4 py-2 bg-red-500 rounded"
-                >
-                  <Text className="text-white font-medium">RESET</Text>
-                </TouchableOpacity>
-              </View>
+
+              {/* Reset Button */}
+              <TouchableOpacity
+                onPress={resetSelections}
+                className="mt-6 px-4 py-2 bg-red-500 rounded"
+              >
+                <Text className="text-white font-medium">RESET</Text>
+              </TouchableOpacity>
+            </View>
           </View>
+
         </View>
       </SafeAreaView>
       <Footer/>

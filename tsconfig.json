@@ -6,7 +6,12 @@
       "@/*": [
         "./*"
       ]
-    }
+    },
+    "target": "es2022", // Enables modern JavaScript features like top-level await
+    "module": "es2022", // Required for top-level await
+    "moduleResolution": "node", // Ensures proper resolution of modules
+    "allowSyntheticDefaultImports": true, // Allows default imports from modules
+    "esModuleInterop": true // Ensures compatibility with CommonJS and ESModules
   },
   "include": [
     "**/*.ts",

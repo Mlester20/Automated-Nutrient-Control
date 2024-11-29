@@ -8,6 +8,7 @@ import { Protein } from '@/constants/proteinIngredients';
 import IngredientQuantityInput from '@/components/IngredientQuantityInput';
 import Footer from '@/components/Footer';
 import { FeedPreparationGuide } from '@/constants/FeedPreparation';
+import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
 import {
   calculateBoneMealSCP,
   calculateKangkongProteinSCP,
@@ -40,9 +41,6 @@ const Calculate = () => {
   const [selectedProtein1, setSelectedProtein1] = useState<string | undefined>();
   const [selectedProtein2, setSelectedProtein2] = useState<string | undefined>();
   const [ingredientQuantities, setIngredientQuantities] = useState<{ [key: string]: number }>({});
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-  
 
   // Function to get the target crude protein for the selected stage
   const getTargetProtein = (stage: string) => {
@@ -134,6 +132,7 @@ const Calculate = () => {
   // Calculate total crude protein
   const calculateCrudeProtein = () => {
     let totalProtein = 0;
+    let totalWeight = 0;
     for (const ingredient in ingredientQuantities) {
       const weight = ingredientQuantities[ingredient];
       totalProtein += calculateIngredientCrudeProtein(ingredient, weight);
@@ -340,17 +339,27 @@ const Calculate = () => {
                   );
                 })}
               </View>
+
               <View className="mt-4 border-t border-gray-300 pt-4">
-                    <Text className="text-md font-JakartaMedium text-center text-gray-800">
-                      Total Average Shared Crude Protein: {(
-                        Object.entries(ingredientQuantities).reduce((total, [ingredient, weight]) => {
-                          return total + calculateIngredientCrudeProtein(ingredient, weight);
-                        }, 0)
-                      ).toFixed(2)}%
-                    </Text>
-                  <Text>
+                {/* Display Total Weight */}
+                <Text className="text-md font-JakartaMedium text-center text-gray-800">
+                  Total Weight: {Object.values(ingredientQuantities).reduce((sum, weight) => sum + weight, 0)} kg
+                </Text>
+
+                {/* Display Total Average Shared Crude Protein */}
+                <Text className="text-md font-JakartaMedium text-center text-gray-800 mt-2">
+                  Total Average Shared Crude Protein: {(
+                    Object.entries(ingredientQuantities).reduce((totalCrudeProtein, [ingredient, weight]) => {
+                      const totalWeight = Object.values(ingredientQuantities).reduce((sum, w) => sum + w, 0);
+                      if (totalWeight === 0) return 0; // Prevent division by zero
+                      return totalCrudeProtein + (calculateIngredientCrudeProtein(ingredient, weight) / totalWeight);
+                    }, 0) * 100 // Convert to percentage
+                  ).toFixed(2)}%
                 </Text>
               </View>
+
+
+
               <Text>
                 {checkCrudeProtein()}
               </Text>
@@ -360,36 +369,36 @@ const Calculate = () => {
           <View className="flex-1 justify-center items-center p-4">
             <View className="flex-row space-x-4">
               {/* Calculate Button */}
-            <TouchableOpacity
-              onPress={() => {
-                if (selectedLiveStock && selectedStage) {
-                  const {
-                    waterIntake,
-                    feedIntakeRange,
-                    morningFeed,
-                    afternoonFeed,
-                    eveningFeed
-                  } = LivestockData();
+                <TouchableOpacity
+                  onPress={() => {
+                    if (selectedLiveStock && selectedStage) {
+                      const {
+                        waterIntake,
+                        feedIntakeRange,
+                        morningFeed,
+                        afternoonFeed,
+                        eveningFeed
+                      } = LivestockData();
 
-                  Alert.alert(
-                    "Guide",
-                    `Results for ${selectedLiveStock}:\n\n` +
-                      `Stage: ${selectedStage}\n` +
-                      `Water Intake: ${waterIntake}\n` +
-                      `Feed Intake: ${feedIntakeRange} (Daily)\n` +
-                      `Morning: ${morningFeed}\n` +
-                      `Afternoon: ${afternoonFeed}\n` +
-                      `Evening: ${eveningFeed}\n\n` +
-                      FeedPreparationGuide
-                  );
-                } else {
-                  Alert.alert("Error", "Please select both livestock and stage.");
-                }
-              }}
-              className="mt-6 px-4 py-2 bg-blue-500 rounded"
-            >
-            <Text className="text-white font-medium">View Result</Text>
-          </TouchableOpacity>    
+                      Alert.alert(
+                        "Guide",
+                        `Results for ${selectedLiveStock}:\n\n` +
+                          `Stage: ${selectedStage}\n` +
+                          `Water Intake: ${waterIntake}\n` +
+                          `Feed Intake: ${feedIntakeRange} (Daily)\n` +
+                          `Morning: ${morningFeed}\n` +
+                          `Afternoon: ${afternoonFeed}\n` +
+                          `Evening: ${eveningFeed}\n\n` +
+                          FeedPreparationGuide
+                      );
+                    } else {
+                      Alert.alert("Error", "Please select both livestock and stage.");
+                    }
+                  }}
+                  className="mt-6 px-4 py-2 bg-blue-500 rounded"
+                >
+                <Text className="text-white font-medium">View Guide</Text>
+              </TouchableOpacity>    
 
 
 
@@ -402,7 +411,6 @@ const Calculate = () => {
               </TouchableOpacity>
             </View>
           </View>
-
 
         </View>
       </SafeAreaView>

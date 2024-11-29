@@ -1,19 +1,3 @@
-import arrowDown from "@/assets/icons/arrow-down.png";
-import arrowUp from "@/assets/icons/arrow-up.png";
-import backArrow from "@/assets/icons/back-arrow.png";
-import chat from "@/assets/icons/chat.png";
-import checkmark from "@/assets/icons/check.png";
-import close from "@/assets/icons/close.png";
-import dollar from "@/assets/icons/dollar.png";
-import email from "@/assets/icons/email.png";
-import eyecross from "@/assets/icons/eyecross.png";
-import google from "@/assets/icons/google.png";
-import home from "@/assets/icons/home.png";
-import list from "@/assets/icons/list.png";
-import lock from "@/assets/icons/lock.png";
-import map from "@/assets/icons/map.png";
-import marker from "@/assets/icons/marker.png";
-import out from "@/assets/icons/out.png";
 import person from "@/assets/icons/person.png";
 import pin from "@/assets/icons/pin.png";
 import point from "@/assets/icons/point.png";
@@ -23,44 +7,39 @@ import selectedMarker from "@/assets/icons/selected-marker.png";
 import star from "@/assets/icons/star.png";
 import target from "@/assets/icons/target.png";
 import to from "@/assets/icons/to.png";
-import check from "@/assets/images/check.png";
-import getStarted from "@/assets/images/get-started.png";
-import message from "@/assets/images/message.png";
-import noResult from "@/assets/images/no-result.png";
 import books from "@/assets/icons/books.png";
-import photo from '@/assets/images/photo.png';
 import calculate from '@/assets/icons/calculate.png';
 import history from '@/assets/icons/history.png';
 import onboarding9 from '@/assets/images/onboarding9.png';
 import onboarding10 from '@/assets/images/onboarding10.png';
+import coprameal  from '@/assets/images/coprameal.jpg'
+import Fishmeal from '@/assets/images/Fishmeal.jpg';
+import gabi from '@/assets/images/gabi.jpg';
+import indigofera from '@/assets/images/indigofera.jpg';
+import ipilipil from '@/assets/images/ipilipil.jpg';
+import kakawati from '@/assets/images/kakawati.jpg';
+import kangkong from '@/assets/images/kangkong.jpg'
+import resonii from '@/assets/images/rensonii.jpg';
+import Ricebran from '@/assets/images/Ricebran.jpg';
+import Soybeanmeal from '@/assets/images/Soybeanmeal.jpg';
+import home from '@/assets/icons/home.png'
 
 export const images = {
   onboarding9,
   onboarding10,
-  getStarted,
-  check,
-  noResult,
-  message,
-  photo,
+  coprameal,
+  Fishmeal,
+  gabi,
+  indigofera,
+  ipilipil,
+  kakawati,
+  kangkong,
+  resonii,
+  Ricebran,
+  Soybeanmeal,
 };
 
 export const icons = {
-  arrowDown,
-  arrowUp,
-  backArrow,
-  chat,
-  checkmark,
-  close,
-  dollar,
-  email,
-  eyecross,
-  google,
-  home,
-  list,
-  lock,
-  map,
-  marker,
-  out,
   person,
   pin,
   point,
@@ -72,7 +51,8 @@ export const icons = {
   to,
   calculate,
   books,
-  history
+  history,
+  home,
 };
 
 
@@ -91,8 +71,74 @@ export const onboarding = [
         "Select your livestock’s details and get accurate crude nutrients with organic ingredients.",
       image: images.onboarding10,
     },
-  ];
-  
+];
+
+export const ingredients = [
+  {
+    id: 1,
+    title: 'Copra Meal',
+    image: images.coprameal,
+    description: 'A by-product of coconut oil extraction, high in energy and fiber, often used as livestock feed to enhance growth and weight gain.'
+  },
+  {
+    id: 2,
+    title: 'Fish Meal',
+    image: images.Fishmeal,
+    description: 'A high-protein feed ingredient made from ground fish or fish by-products, rich in essential amino acids and omega-3 fatty acids.'
+  },
+  {
+    id: 3,
+    title: 'Indigo Fera',
+    image: images.indigofera,
+    description: 'A leguminous plant known for its high protein content, used as a forage crop for livestock to support healthy growth and nutrition.'
+  },
+  {
+    id: 4,
+    title: 'Ipil-Ipil',
+    image: images.ipilipil,
+    description: 'A versatile tree legume with leaves rich in protein, commonly used as a sustainable feed ingredient for livestock and poultry.'
+  },
+  {
+    id: 5,
+    title: 'Kakawati',
+    image: images.kakawati,
+    description: 'Also known as Madre de Cacao, its leaves are used as an organic feed ingredient due to their high nutrient content and medicinal properties.'
+  },
+  {
+    id: 6,
+    title: 'Kangkong',
+    image: images.kangkong,
+    description: 'A fast-growing water plant rich in vitamins and minerals, often used as a green feed supplement for livestock and poultry.'
+  },
+  {
+    id: 7,
+    title: 'Resoni',
+    image: images.resonii,
+    description: 'A type of forage plant valued for its high protein content and digestibility, making it an ideal feed for livestock.'
+  },
+  {
+    id: 8,
+    title: 'Rice Bran',
+    image: images.Ricebran,
+    description: 'A by-product of rice milling, it is a good source of energy, fiber, and essential fatty acids for animal feed formulations.'
+  },
+  {
+    id: 9,
+    title: 'Soy Bean Meal',
+    image: images.Soybeanmeal,
+    description: 'A high-protein feed ingredient derived from soybeans, widely used to support growth and reproduction in livestock and poultry.'
+  }
+];
+
+
+export const Credits = [
+  {
+      id: 1,
+      title: 'Automated Nutrient Control Version 1.0',
+      description: 'This application was developed by the students of Isabela State University, Roxas Campus. It is designed to assist farmers who are looking to self-mix their own feed using locally available ingredients. The app aims to provide a user-friendly platform for small-scale farmers, particularly those in rural areas, to calculate organic feeds for their livestock. By using this application, farmers can optimize the nutritional content of their feeds, promoting healthier livestock and contributing to sustainable farming practices',
+      image: onboarding9,
+  }
+]
 
 export const data = {
   onboarding,

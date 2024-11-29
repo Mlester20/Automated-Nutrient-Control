@@ -16,7 +16,7 @@ const IngredientQuantityInput: React.FC<IngredientQuantityInputProps> = ({
       <TextInput
         className="border border-gray-300 rounded-lg p-2 w-[50%] bg-gray-100"
         keyboardType="numeric"
-        placeholder="Enter weight (kg)"
+        placeholder="Enter weight(kg)"
         onChangeText={(text) => {
           const weight = parseFloat(text) || 0;
           onQuantityChange(weight);
