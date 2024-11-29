@@ -5,58 +5,46 @@ export const Energy = [
     },
     {
         id: 2,
-        title: 'Sweet Potato',
-    },
-    {
-        id: 3,
         title: 'Rice Bran',
     },
     {
-        id: 4,
+        id: 3,
         title: 'Molasses',
     },
     {
-        id: 5,
+        id: 4,
         title: 'Rice Middling',
     },
     {
-        id: 6,
+        id: 5,
         title: 'Rensonii',
     },
     {
-        id: 7,
-        title: 'Ipil Ipil',
-    },
-    {
-        id: 8,
+        id: 6,
         title: 'Kakawati',
     },
     {
-        id: 9,
-        title: 'Kangkong',
-    },  
-    {
-        id: 10,
+        id: 7,
         title: 'Gabi',
-    },   
+    },
     {
-        id: 11,
+        id: 8,
         title: 'Madre de Agua',
-    },   
+    },
     {
-        id: 12,
+        id: 9,
         title: 'Indigofera',
     },
     {
-        id: 13,
+        id: 10,
         title: 'Napier',
     },
     {
-        id: 14,
-        title: 'Mani-Manihan'
+        id: 11,
+        title: 'Mani-Manihan',
     },
-]
+];
 
 export const data = {
     Energy,
-}
+};

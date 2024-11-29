@@ -22,7 +22,10 @@ import kangkong from '@/assets/images/kangkong.jpg'
 import resonii from '@/assets/images/rensonii.jpg';
 import Ricebran from '@/assets/images/Ricebran.jpg';
 import Soybeanmeal from '@/assets/images/Soybeanmeal.jpg';
-import home from '@/assets/icons/home.png'
+import home from '@/assets/icons/home.png';
+import broilerChicken from '@/assets/images/broilerChicken.png';
+import layerChicken from '@/assets/images/layersChicken.jpg';
+import dualPurposeChicken from '@/assets/images/dualPurposeChicken.jpg';
 
 export const images = {
   onboarding9,
@@ -53,6 +56,9 @@ export const icons = {
   books,
   history,
   home,
+  broilerChicken,
+  dualPurposeChicken,
+  layerChicken,
 };
 
 
@@ -139,6 +145,28 @@ export const Credits = [
       image: onboarding9,
   }
 ]
+
+export const liveStocks = [
+  {
+    id: 1,
+    title: 'Broiler Chicken',
+    description: 'Broilers are chickens bred and raised exclusively for meat production. Broilers grow rapidly and produce large breast muscles. The typical raising period is 35-36 days, with a targeted body weight ranging from 2kg to 4.5kg (4.4 to 9.9lbs). Common breeds are Ross 308/708, Cobb 500/700, Arbor Acres broiler, etc.',
+    image: broilerChicken,
+  },
+  {
+    id: 2,
+    title: 'Dual Purpose Chicken',
+    description: 'Dual-purpose chickens are versatile breeds suitable for both egg and meat production. These chickens are valued by small-scale farmers for their balanced utility. Common dual-purpose breeds include Rhode Island Reds, Sussex, and Plymouth Rocks. Their eggs are medium to large in size, and they can reach an average body weight of 2.5kg to 4kg (5.5 to 8.8lbs).',
+    image: dualPurposeChicken,
+  },
+  {
+    id: 3,
+    title: 'Layer Chicken',
+    description: 'Layer chickens are specifically bred for consistent egg production. These chickens start laying eggs at around 18-20 weeks of age and can lay up to 300 eggs annually. Common breeds include White Leghorns, Lohmann Browns, and Isa Browns. They are typically smaller in size, with a body weight ranging from 1.5kg to 2kg (3.3 to 4.4lbs).',
+    image: layerChicken,
+  },
+];
+
 
 export const data = {
   onboarding,

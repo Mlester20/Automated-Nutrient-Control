@@ -132,6 +132,7 @@ const Calculate = () => {
   // Calculate total crude protein
   const calculateCrudeProtein = () => {
     let totalProtein = 0;
+    let totalWeight = 0;
     for (const ingredient in ingredientQuantities) {
       const weight = ingredientQuantities[ingredient];
       totalProtein += calculateIngredientCrudeProtein(ingredient, weight);
@@ -338,17 +339,27 @@ const Calculate = () => {
                   );
                 })}
               </View>
+
               <View className="mt-4 border-t border-gray-300 pt-4">
-                    <Text className="text-md font-JakartaMedium text-center text-gray-800">
-                      Total Average Shared Crude Protein: {(
-                        Object.entries(ingredientQuantities).reduce((total, [ingredient, weight]) => {
-                          return total + calculateIngredientCrudeProtein(ingredient, weight);
-                        }, 0)
-                      ).toFixed(2)}%
-                    </Text>
-                  <Text>
+                {/* Display Total Weight */}
+                <Text className="text-md font-JakartaMedium text-center text-gray-800">
+                  Total Weight: {Object.values(ingredientQuantities).reduce((sum, weight) => sum + weight, 0)} kg
+                </Text>
+
+                {/* Display Total Average Shared Crude Protein */}
+                <Text className="text-md font-JakartaMedium text-center text-gray-800 mt-2">
+                  Total Average Shared Crude Protein: {(
+                    Object.entries(ingredientQuantities).reduce((totalCrudeProtein, [ingredient, weight]) => {
+                      const totalWeight = Object.values(ingredientQuantities).reduce((sum, w) => sum + w, 0);
+                      if (totalWeight === 0) return 0; // Prevent division by zero
+                      return totalCrudeProtein + (calculateIngredientCrudeProtein(ingredient, weight) / totalWeight);
+                    }, 0) * 100 // Convert to percentage
+                  ).toFixed(2)}%
                 </Text>
               </View>
+
+
+
               <Text>
                 {checkCrudeProtein()}
               </Text>
