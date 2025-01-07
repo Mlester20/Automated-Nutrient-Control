@@ -18,14 +18,11 @@ import {
   calculateSweetPotatoProteinSCP,
   calculateIpilIpilLeafMealSCP,
   calculateCornGritsEnergy,
-  calculateSweetPotatoEnergy,
   calculateRiceBranEnergy,
   calculateMolassesEnergy,
   calculateRiceMiddlingEnergy,
   calculateRensoniiEnergy,
-  calculateIpilIpilEnergy,
   calculateKakawatiEnergy,
-  calculateKangkongEnergy,
   calculateGabiEnergy,
   calculateMadreDeAguaEnergy,
   calculateIndigoferaEnergy,
@@ -125,9 +122,6 @@ const Calculate = () => {
       targetProtein: "N/A",
     };
   };
-  
-  
-  
 
   // Calculate total crude protein
   const calculateCrudeProtein = () => {
@@ -328,12 +322,14 @@ const Calculate = () => {
               </Text>
               <View>
                 {Object.entries(ingredientQuantities).map(([ingredient, weight]) => {
+                  // Get the crude protein per ingredient based on its weight
                   const sharedCrudeProtein = calculateIngredientCrudeProtein(ingredient, weight);
+
                   return (
                     <View key={ingredient} className="flex-row justify-between mb-2">
                       <Text className="text-md font-JakartaMedium text-gray-600">{ingredient}:</Text>
                       <Text className="text-md font-JakartaMedium text-gray-800">
-                        {weight}kg - {sharedCrudeProtein.toFixed(2)}%
+                        {weight}kg - {sharedCrudeProtein.toFixed(2)}% {/* No need to show division */}
                       </Text>
                     </View>
                   );
@@ -347,22 +343,22 @@ const Calculate = () => {
                 </Text>
 
                 {/* Display Total Average Shared Crude Protein */}
-                <Text className="text-md font-JakartaMedium text-center text-gray-800 mt-2">
-                  Total Average Shared Crude Protein: {(
-                    Object.entries(ingredientQuantities).reduce((totalCrudeProtein, [ingredient, weight]) => {
-                      const totalWeight = Object.values(ingredientQuantities).reduce((sum, w) => sum + w, 0);
-                      if (totalWeight === 0) return 0; // Prevent division by zero
-                      return totalCrudeProtein + (calculateIngredientCrudeProtein(ingredient, weight) / totalWeight);
-                    }, 0) * 100 // Convert to percentage
-                  ).toFixed(2)}%
+                <Text className="text-md font-JakartaMedium text-center text-gray-800 mb-5">
+                  Total Average Shared Crude Protein: {(() => {
+                    const totalWeight = Object.values(ingredientQuantities).reduce((sum, weight) => sum + weight, 0);
+                    const totalSharedCrudeProtein = Object.entries(ingredientQuantities).reduce(
+                      (totalCrudeProtein, [ingredient, weight]) =>
+                        totalCrudeProtein + calculateIngredientCrudeProtein(ingredient, weight),
+                      0
+                    );
+
+                    const averageCrudeProtein = totalWeight === 0 ? 0 : (totalSharedCrudeProtein);
+                    return averageCrudeProtein.toFixed(2); // Ensure proper formatting
+                  })()}%
                 </Text>
               </View>
 
-
-
-              <Text>
-                {checkCrudeProtein()}
-              </Text>
+              <Text>{checkCrudeProtein()}</Text>
             </View>
           )}
 

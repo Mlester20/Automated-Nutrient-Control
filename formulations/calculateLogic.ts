@@ -35,7 +35,7 @@ export function calculateIpilIpilLeafMealSCP(kg: number): number {
 
 // Energy Ingredients Functions
 export function calculateCornGritsEnergy(kg: number): number {
-  const energyPercentage = 0.7; // Assumed energy percentage for Corn Grits
+  const energyPercentage = 0.07; // Assumed energy percentage for Corn Grits
   return kg * energyPercentage;
 }
 

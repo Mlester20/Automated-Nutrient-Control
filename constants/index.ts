@@ -26,6 +26,18 @@ import home from '@/assets/icons/home.png';
 import broilerChicken from '@/assets/images/broilerChicken.png';
 import layerChicken from '@/assets/images/layersChicken.jpg';
 import dualPurposeChicken from '@/assets/images/dualPurposeChicken.jpg';
+import landRace from '@/assets/images/landRace.jpg'
+import largeWhitePig from '@/assets/images/largeWhitePig.jpg';
+import nativePig from '@/assets/images/nativePig.jpg';
+import tilipia from '@/assets/images/tilipia.jpg';
+import milkFish from '@/assets/images/milkFish.jpg';
+import molasses from '@/assets/images/molasses.jpg';
+import sweetpotato from '@/assets/images/sweet potato.jpg';
+import corngrits from '@/assets/images/corn-grits.jpg';
+import manimanihan from '@/assets/images/mani manihan.jpg';
+import madreagua from '@/assets/images/madre agua.jpg';
+import blueTilapia from '@/assets/images/blueTilapia.png';
+import nileTilapia from '@/assets/images/nileTilapia.png';
 
 export const images = {
   onboarding9,
@@ -40,6 +52,18 @@ export const images = {
   resonii,
   Ricebran,
   Soybeanmeal,
+  landRace,
+  largeWhitePig,
+  nativePig,
+  tilipia,
+  milkFish,
+  molasses,
+  sweetpotato,
+  corngrits,
+  manimanihan,
+  madreagua,
+  blueTilapia,
+  nileTilapia
 };
 
 export const icons = {
@@ -84,56 +108,122 @@ export const ingredients = [
     id: 1,
     title: 'Copra Meal',
     image: images.coprameal,
-    description: 'A by-product of coconut oil extraction, high in energy and fiber, often used as livestock feed to enhance growth and weight gain.'
+    availability: 'Feed stores, coconut mills, markets',
+    types:'Protein source',
+    category:'Protein-rich feed'
   },
   {
     id: 2,
     title: 'Fish Meal',
     image: images.Fishmeal,
-    description: 'A high-protein feed ingredient made from ground fish or fish by-products, rich in essential amino acids and omega-3 fatty acids.'
+    availability: 'Feed mills, agricultural stores',
+    types:'Protein source',
+    category:'Protein-rich feed'
   },
   {
     id: 3,
     title: 'Indigo Fera',
     image: images.indigofera,
-    description: 'A leguminous plant known for its high protein content, used as a forage crop for livestock to support healthy growth and nutrition.'
+    availability: 'Local surroundings',
+    types:'Legume forage',
+    category:'Protein-rich forage'
   },
   {
     id: 4,
     title: 'Ipil-Ipil',
     image: images.ipilipil,
-    description: 'A versatile tree legume with leaves rich in protein, commonly used as a sustainable feed ingredient for livestock and poultry.'
+    availability: 'Local surroundings',
+    types:'Legume forage',
+    category:'Protein-rich forage'
   },
   {
     id: 5,
     title: 'Kakawati',
     image: images.kakawati,
-    description: 'Also known as Madre de Cacao, its leaves are used as an organic feed ingredient due to their high nutrient content and medicinal properties.'
+    availability: 'local surroundings',
+    types:'Legume forage tree',
+    category:'Protein-rich forage'
   },
   {
     id: 6,
     title: 'Kangkong',
     image: images.kangkong,
-    description: 'A fast-growing water plant rich in vitamins and minerals, often used as a green feed supplement for livestock and poultry.'
+    availability: 'Local surroundings ',
+    types:'Aquatic vegetable forage',
+    category:'Green forage'
   },
   {
     id: 7,
-    title: 'Resoni',
+    title: 'Rensoni',
     image: images.resonii,
-    description: 'A type of forage plant valued for its high protein content and digestibility, making it an ideal feed for livestock.'
+    availability: 'Local surroundings ',
+    types:'Legume forage',
+    category:'Protein-rich forage'
   },
   {
     id: 8,
     title: 'Rice Bran',
     image: images.Ricebran,
-    description: 'A by-product of rice milling, it is a good source of energy, fiber, and essential fatty acids for animal feed formulations.'
+    availability: 'Feed stores, rice mills, agricultural supply shops.',
+    types:'Energy source',
+    category:'Carbohydrate-rich feed'
   },
   {
     id: 9,
     title: 'Soy Bean Meal',
     image: images.Soybeanmeal,
-    description: 'A high-protein feed ingredient derived from soybeans, widely used to support growth and reproduction in livestock and poultry.'
-  }
+    availability: 'Feed stores, agricultural supply shops.',
+    types:'High-protein feed',
+    category:'Protein-rich feed'
+  },
+   {
+    id: 10,
+    title: 'Molasses',
+    image: images.molasses,
+    availability: 'Sugar mills, feed stores',
+    types:'Energy supplement',
+    category:'Energy feed'
+  },
+  {
+    id: 11,
+    title: 'Sweet Potato',
+    image: images.sweetpotato,
+    availability: 'Markets, local farms',
+    types:'	Energy source',
+    category:'Carbohydrate-rich feed'
+  },
+  {
+    id: 12,
+    title: 'Corngrits',
+    image: images.corngrits,
+    availability: 'Markets, agricultural stores',
+    types:'Energy source',
+    category:'Carbohydrate-rich feed'
+  },
+  {
+    id: 13,
+    title: 'Mani manihan',
+    image: images.manimanihan,
+    availability: 'local surroundings ',
+    types:'Grass forage',
+    category:'Green forage'
+  },
+  {
+    id: 14,
+    title: 'Gabi',
+    image: images.gabi,
+    availability: 'local surroundings, Markets ',
+    types:'Green leafy forage',
+    category:'Vegetable forage'
+  },
+  {
+    id: 15,
+    title: 'Madre Agua',
+    image: images.madreagua,
+    availability: 'local surroundings ',
+    types:'	Legume forage',
+    category:'Protein-rich forage'
+  },
 ];
 
 
@@ -146,27 +236,109 @@ export const Credits = [
   }
 ]
 
-export const liveStocks = [
+export const chickens = [
   {
-    id: 1,
-    title: 'Broiler Chicken',
-    description: 'Broilers are chickens bred and raised exclusively for meat production. Broilers grow rapidly and produce large breast muscles. The typical raising period is 35-36 days, with a targeted body weight ranging from 2kg to 4.5kg (4.4 to 9.9lbs). Common breeds are Ross 308/708, Cobb 500/700, Arbor Acres broiler, etc.',
-    image: broilerChicken,
+      id: 1,
+      title: "Broiler",
+      description: "A plump, white chicken raised for its soft and juicy meat. It grows very quickly and a favorite in many dishes. Ideal for food production.  ",
+      image: broilerChicken,
+      nutrientValues: [
+          { stage: "Pre-Starter", crudeProtein: "21% - 23%"},
+          { stage: "Starter", crudeProtein: "19% - 20%"},
+          { stage: "Grower", crudeProtein: "18% - 19%"},
+          { stage: "Finisher", crudeProtein: "16% - 17%" }
+      ],
   },
   {
     id: 2,
-    title: 'Dual Purpose Chicken',
-    description: 'Dual-purpose chickens are versatile breeds suitable for both egg and meat production. These chickens are valued by small-scale farmers for their balanced utility. Common dual-purpose breeds include Rhode Island Reds, Sussex, and Plymouth Rocks. Their eggs are medium to large in size, and they can reach an average body weight of 2.5kg to 4kg (5.5 to 8.8lbs).',
+    title: "Dual Purpose Chicken",
+    description: "This chicken gives both eggs and meat, making it ideal for families or small farms. It is strong and can live in different environments.  Making it versatile for small-scale farming.",
     image: dualPurposeChicken,
+    nutrientValues: [
+        { stage: "Pre-Starter", crudeProtein: "21% - 23%"},
+        { stage: "Starter", crudeProtein: "19% - 20%"},
+        { stage: "Grower", crudeProtein: "18% - 19%"},
+        { stage: "Finisher", crudeProtein: "16% - 17%" }
+    ],
+},
+{
+  id: 3,
+  title: "Layer",
+  description: "A slim chicken that lays many eggs. It has a calm personality and is perfect for egg farming.",
+  image: layerChicken,
+  nutrientValues: [
+      { stage: "Pre-Starter", crudeProtein: "21% - 23%"},
+      { stage: "Starter", crudeProtein: "19% - 20%"},
+      { stage: "Grower", crudeProtein: "18% - 19%"},
+      { stage: "Finisher", crudeProtein: "16% - 17%" }
+  ],
+},
+];
+
+export const pigs = [
+  {
+      id: 1,
+      title: "Large White Pig",
+      description: "A big, white pig with a smooth body and upright ears. It grows fast and provides a lot of high-quality meat. It is calm and gentle in nature",
+      image: largeWhitePig,
+      nutrientValues: [
+          { stage: "Starter", crudeProtein: "18% - 20%"},
+          { stage: "Grower", crudeProtein: "15% - 16%"},
+          { stage: "Finisher", crudeProtein: "13% - 14%" },
+          { stage: "Young gilts/boar", crudeProtein: "15% - 16%" },
+          { stage: "Older sow/boar", crudeProtein: "13% - 14%" }
+      ],
+  },
+  {
+    id: 2,
+    title: "Land Race Pig",
+    description: "A long-bodied pig with droopy ears, famous for its high-quality and tender meat, and strong mothering skills.  Often used for breeding as they are excellent mothers.",
+    image: landRace,
+    nutrientValues: [
+      { stage: "Starter", crudeProtein: "18% - 20%"},
+      { stage: "Grower", crudeProtein: "15% - 16%"},
+      { stage: "Finisher", crudeProtein: "13% - 14%" },
+      { stage: "Young gilts/boar", crudeProtein: "15% - 16%" },
+      { stage: "Older sow/boar", crudeProtein: "13% - 14%" }
+    ],
   },
   {
     id: 3,
-    title: 'Layer Chicken',
-    description: 'Layer chickens are specifically bred for consistent egg production. These chickens start laying eggs at around 18-20 weeks of age and can lay up to 300 eggs annually. Common breeds include White Leghorns, Lohmann Browns, and Isa Browns. They are typically smaller in size, with a body weight ranging from 1.5kg to 2kg (3.3 to 4.4lbs).',
-    image: layerChicken,
+    title: "Native Pig",
+    description: "A small, black or brown pig that is strong and can survive in tough conditions. Its meat is rich in flavor, often used in traditional dishes.",
+    image: nativePig,
+    nutrientValues: [
+      { stage: "Starter", crudeProtein: "18% - 20%"},
+      { stage: "Grower", crudeProtein: "15% - 16%"},
+      { stage: "Finisher", crudeProtein: "13% - 14%" },
+      { stage: "Young gilts/boar", crudeProtein: "15% - 16%" },
+      { stage: "Older sow/boar", crudeProtein: "13% - 14%" }
+    ],
   },
 ];
 
+export const fish = [
+  {
+      id: 1,
+      title: "Blue Tilapia",
+      description: "A hardy and adaptable fish with bluish-gray scales. It can live in both fresh and salty water and is valued for its firm, sweet meat.",
+      image: blueTilapia,
+      nutrientValues: [
+          { stage: "Starter", crudeProtein: "39%-40%", energy: "3000" },
+          { stage: "Grower", crudeProtein: "37%- 38%", energy: "3200" },
+      ],
+  },
+    {
+      id: 2,
+      title: "Nile Tilapia",
+      description: "A freshwater fish with a round, flat body and light-colored scales. It grows fast and has mild, tasty meat that is popular worldwide. ",
+      image: nileTilapia,
+      nutrientValues: [
+          { stage: "Starter", crudeProtein: "39%-40%", energy: "3000" },
+          { stage: "Grower", crudeProtein: "37%- 38%", energy: "3200" },
+      ],
+  },
+];
 
 export const data = {
   onboarding,
