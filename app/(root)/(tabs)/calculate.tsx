@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, SafeAreaView, ScrollView, Button, Modal, Alert, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Stage } from '@/constants/Stage';
@@ -67,6 +67,8 @@ const Calculate = () => {
   const [selectedProtein1, setSelectedProtein1] = useState<string | undefined>();
   const [selectedProtein2, setSelectedProtein2] = useState<string | undefined>();
   const [ingredientQuantities, setIngredientQuantities] = useState<{ [key: string]: number }>({});
+
+  //determine when the stage selected was fish to disabled the another selection to stage
 
   useEffect(() => {
     const fetchData = async () => {
@@ -238,6 +240,7 @@ const Calculate = () => {
                 ))}
               </Picker>
             </View>
+            
           </View>
 
           {/* Display Target Protein */}
@@ -401,7 +404,7 @@ const Calculate = () => {
                         0
                       );
 
-                      const averageCrudeProtein = totalWeight === 0 ? 0 : (totalSharedCrudeProtein / totalWeight) * 100;
+                      const averageCrudeProtein = totalWeight === 0 ? 0 : (totalSharedCrudeProtein);
                       return averageCrudeProtein.toFixed(2); // Ensure proper formatting
                     })()}%
                   </Text>
