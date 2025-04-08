@@ -81,9 +81,9 @@ export default function Layout() {
         }}
       />
       <Tabs.Screen
-        name="history"
+        name="reference"
         options={{
-          title: "History",
+          title: "Reference",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
             <TabIcon source={icons.history} focused={focused} />
@@ -91,9 +91,9 @@ export default function Layout() {
         }}
       />
       <Tabs.Screen
-        name="reference"
+        name="credits"
         options={{
-          title: "Reference",
+          title: "Credits",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
             <TabIcon source={icons.profile} focused={focused} />

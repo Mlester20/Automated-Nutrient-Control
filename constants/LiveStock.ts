@@ -1,4 +1,3 @@
-
 const LiveStock = {
     Chicken: [
       { id: 1, stage: 'Starter', targetProtein: '18-20%' },

@@ -109,16 +109,16 @@ export const ingredients = [
     title: 'Copra Meal',
     image: images.coprameal,
     availability: 'Feed stores, coconut mills, markets',
-    types:'Protein source',
-    category:'Protein-rich feed'
+    types:'Protein feed',
+    source:'Protein source'
   },
   {
     id: 2,
     title: 'Fish Meal',
     image: images.Fishmeal,
     availability: 'Feed mills, agricultural stores',
-    types:'Protein source',
-    category:'Protein-rich feed'
+    types:'Protein feed',
+    source:'Protein source'
   },
   {
     id: 3,
@@ -126,7 +126,7 @@ export const ingredients = [
     image: images.indigofera,
     availability: 'Local surroundings',
     types:'Legume forage',
-    category:'Protein-rich forage'
+    source:'Protein source'
   },
   {
     id: 4,
@@ -134,7 +134,7 @@ export const ingredients = [
     image: images.ipilipil,
     availability: 'Local surroundings',
     types:'Legume forage',
-    category:'Protein-rich forage'
+    source:'Protein source'
   },
   {
     id: 5,
@@ -142,7 +142,7 @@ export const ingredients = [
     image: images.kakawati,
     availability: 'local surroundings',
     types:'Legume forage tree',
-    category:'Protein-rich forage'
+    source:'Protein source'
   },
   {
     id: 6,
@@ -150,7 +150,7 @@ export const ingredients = [
     image: images.kangkong,
     availability: 'Local surroundings ',
     types:'Aquatic vegetable forage',
-    category:'Green forage'
+    source:'Green forage'
   },
   {
     id: 7,
@@ -158,15 +158,15 @@ export const ingredients = [
     image: images.resonii,
     availability: 'Local surroundings ',
     types:'Legume forage',
-    category:'Protein-rich forage'
+    source:'Protein source'
   },
   {
     id: 8,
     title: 'Rice Bran',
     image: images.Ricebran,
     availability: 'Feed stores, rice mills, agricultural supply shops.',
-    types:'Energy source',
-    category:'Carbohydrate-rich feed'
+    types:'Carbohydrate-rich feed',
+    source:'Energy source'
   },
   {
     id: 9,
@@ -174,7 +174,7 @@ export const ingredients = [
     image: images.Soybeanmeal,
     availability: 'Feed stores, agricultural supply shops.',
     types:'High-protein feed',
-    category:'Protein-rich feed'
+    source:'Protein source'
   },
    {
     id: 10,
@@ -182,23 +182,23 @@ export const ingredients = [
     image: images.molasses,
     availability: 'Sugar mills, feed stores',
     types:'Energy supplement',
-    category:'Energy feed'
+    source:'Energy source'
   },
   {
     id: 11,
     title: 'Sweet Potato',
     image: images.sweetpotato,
     availability: 'Markets, local farms',
-    types:'	Energy source',
-    category:'Carbohydrate-rich feed'
+    types:'	Carbohydrate-rich feed',
+    source:'energy source'
   },
   {
     id: 12,
     title: 'Corngrits',
     image: images.corngrits,
     availability: 'Markets, agricultural stores',
-    types:'Energy source',
-    category:'Carbohydrate-rich feed'
+    types:'Energy supplement',
+    source:'energy source'
   },
   {
     id: 13,
@@ -206,7 +206,7 @@ export const ingredients = [
     image: images.manimanihan,
     availability: 'local surroundings ',
     types:'Grass forage',
-    category:'Green forage'
+    source:'protien source'
   },
   {
     id: 14,
@@ -214,7 +214,7 @@ export const ingredients = [
     image: images.gabi,
     availability: 'local surroundings, Markets ',
     types:'Green leafy forage',
-    category:'Vegetable forage'
+    source:'energy source'
   },
   {
     id: 15,
@@ -222,7 +222,7 @@ export const ingredients = [
     image: images.madreagua,
     availability: 'local surroundings ',
     types:'	Legume forage',
-    category:'Protein-rich forage'
+    source:'Protein source'
   },
 ];
 
@@ -231,7 +231,7 @@ export const Credits = [
   {
       id: 1,
       title: 'Automated Nutrient Control Version 1.0',
-      description: 'This application was developed by the students of Isabela State University, Roxas Campus. It is designed to assist farmers who are looking to self-mix their own feed using locally available ingredients. The app aims to provide a user-friendly platform for small-scale farmers, particularly those in rural areas, to calculate organic feeds for their livestock. By using this application, farmers can optimize the nutritional content of their feeds, promoting healthier livestock and contributing to sustainable farming practices',
+      description: 'This application was developed by the students of Isabela State University, Roxas Campus. It is designed to assist farmers who are looking to self-mix their own feed using locally available ingredients. The app aims to provide a user-friendly platform for small-scale farmers, particularly those in rural areas, to calculate organic feeds for their livestock. By using this application, farmers can optimize the nutritional content of their feeds, promoting healthier livestock and contributing to sustainable farming practices\n\nPlease contact us for any feedback or suggestions, including additional livestock and ingredients you want to add.\nContact No. 09614988526',
       image: onboarding9,
   }
 ]
@@ -285,8 +285,6 @@ export const pigs = [
           { stage: "Starter", crudeProtein: "18% - 20%"},
           { stage: "Grower", crudeProtein: "15% - 16%"},
           { stage: "Finisher", crudeProtein: "13% - 14%" },
-          { stage: "Young gilts/boar", crudeProtein: "15% - 16%" },
-          { stage: "Older sow/boar", crudeProtein: "13% - 14%" }
       ],
   },
   {
@@ -317,28 +315,6 @@ export const pigs = [
   },
 ];
 
-export const fish = [
-  {
-      id: 1,
-      title: "Blue Tilapia",
-      description: "A hardy and adaptable fish with bluish-gray scales. It can live in both fresh and salty water and is valued for its firm, sweet meat.",
-      image: blueTilapia,
-      nutrientValues: [
-          { stage: "Starter", crudeProtein: "39%-40%", energy: "3000" },
-          { stage: "Grower", crudeProtein: "37%- 38%", energy: "3200" },
-      ],
-  },
-    {
-      id: 2,
-      title: "Nile Tilapia",
-      description: "A freshwater fish with a round, flat body and light-colored scales. It grows fast and has mild, tasty meat that is popular worldwide. ",
-      image: nileTilapia,
-      nutrientValues: [
-          { stage: "Starter", crudeProtein: "39%-40%", energy: "3000" },
-          { stage: "Grower", crudeProtein: "37%- 38%", energy: "3200" },
-      ],
-  },
-];
 
 export const data = {
   onboarding,

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ingredients, chickens, pigs, fish } from '@/constants';
+import { ingredients, chickens, pigs } from '@/constants';
 import Swiper from 'react-native-swiper';
 import Footer from '@/components/Footer';
 
@@ -16,9 +16,7 @@ const Guide = () => {
             setExpandedChickenId(expandedChickenId === id ? null : id); // Collapse if already expanded
         } else if (category === 'pig') {
             setExpandedPigId(expandedPigId === id ? null : id); // Collapse if already expanded
-        } else if (category === 'fish') {
-            setExpandedFishId(expandedFishId === id ? null : id); // Collapse if already expanded
-        }
+        } 
     };
 
     return (
@@ -30,7 +28,7 @@ const Guide = () => {
                 </View>
 
                 {/* Swiper Section */}
-                <View className="h-[300px] mb-7 p-5 bg-white rounded-lg  shadow-xl shadow-black">
+                <View className="h-[310px] mb-7 p-5 bg-white rounded-lg  shadow-xl shadow-black">
                     <Swiper
                         autoplay={true}
                         autoplayTimeout={4}
@@ -67,7 +65,7 @@ const Guide = () => {
                                             ● <Text className="font-bold">Type/Class:</Text> {item.types}
                                         </Text>
                                         <Text className="text-black text-base">
-                                            ● <Text className="font-bold">Category:</Text> {item.category}
+                                            ● <Text className="font-bold">Source:</Text> {item.source}
                                         </Text>
                                     </View>
                                 </View>
@@ -156,58 +154,6 @@ const Guide = () => {
 
                             {/* Expandable Content */}
                             {expandedPigId === stock.id && (
-                                <View className="mt-4">
-                                    <Text className="text-gray-700 text-base">{stock.description}</Text>
-                                    
-                                    {/* Nutrient Table */}
-                                    <View className="mt-4 bg-gray-100 p-4 rounded-lg shadow-md">
-                                        <Text className="text-lg font-bold mb-2">Needed Nutrient Requirements</Text>
-                                        <View className="flex-row justify-between border-b border-gray-300 py-2">
-                                            <Text className="font-bold">Stage</Text>
-                                            <Text className="font-bold">Crude Protein (%)</Text>
-                                        </View>
-                                        {stock.nutrientValues.map((nutrient, index) => (
-                                            <View
-                                                key={index}
-                                                className="flex-row justify-between py-2 border-b border-gray-300"
-                                            >
-                                                <Text>{nutrient.stage}</Text>
-                                                <Text>{nutrient.crudeProtein}</Text>
-                                            </View>
-                                        ))}
-                                    </View>
-                                </View>
-                            )}
-                        </View>
-                    ))}
-                </View>
-
-                <View className="bg-green-600 p-4 mt-4 rounded-b-3xl rounded-t-3xl shadow-lg">
-                    <Text className="mt-5 text-2xl font-JakartaBold text-center mb-4 text-white">Fish Types</Text>
-                    {fish.map((stock) => (
-                        <View
-                            key={stock.id}
-                            className="mb-4 bg-white rounded-lg shadow-md p-4"
-                        >
-                            <TouchableOpacity
-                                onPress={() => toggleExpand('fish', stock.id)}
-                                className="flex-row items-center justify-between"
-                            >
-                                <View className="flex-row items-center">
-                                    <Image
-                                        source={stock.image}
-                                        className="w-12 h-12 mr-4 rounded-md"
-                                        resizeMode="cover"
-                                    />
-                                    <Text className="text-black font-bold text-lg">{stock.title}</Text>
-                                </View>
-                                <Text className="text-green-500 font-bold text-lg">
-                                    {expandedPigId === stock.id ? '-' : '+'}
-                                </Text>
-                            </TouchableOpacity>
-
-                            {/* Expandable Content */}
-                            {expandedFishId === stock.id && (
                                 <View className="mt-4">
                                     <Text className="text-gray-700 text-base">{stock.description}</Text>
                                     

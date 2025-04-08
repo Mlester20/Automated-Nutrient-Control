@@ -8,7 +8,6 @@ import IngredientQuantityInput from '@/components/IngredientQuantityInput';
 import Footer from '@/components/Footer';
 import { FeedPreparationGuide } from '@/constants/FeedPreparation';
 import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 import {
   calculateBoneMealSCP,
   calculateKangkongProteinSCP,
@@ -30,6 +29,7 @@ import {
   calculateManiManihanEnergy
 } from '@/formulations/calculateLogic';
 
+
 async function initializeDatabase(db: any) {
   try {
     console.log("Initializing database...");
@@ -43,32 +43,70 @@ async function initializeDatabase(db: any) {
       );
     `);
 
-    // Check if table is empty, then seed default values
+    // Check if the table is empty and seed only Pig and Chicken
     const result = await db.getAllAsync("SELECT * FROM liveStock;");
     if (result.length === 0) {
-      const defaultValues = ["Pig", "Chicken", "Duck", "Fish"];
+      const defaultValues = ["Pig", "Chicken"];
       for (const name of defaultValues) {
         await db.runAsync("INSERT INTO liveStock (name) VALUES (?);", [name]);
       }
       console.log("Default values seeded successfully!");
+    } else {
+      // If table not empty, ensure only Pig and Chicken remain
+      await db.runAsync("DELETE FROM liveStock WHERE name NOT IN ('Pig', 'Chicken');");
+      console.log("Removed any livestock other than Pig and Chicken!");
     }
   } catch (error) {
     console.error("Error initializing database:", error);
   }
 }
 
+
 const Calculate = () => {
   const db = useSQLiteContext();
-  const [selectedLiveStock, setSelectedLiveStock] = useState<string | undefined>();
+  const [selectedLiveStock, setSelectedLiveStock] = useState<string>();
   const [selectedStage, setSelectedStage] = useState<string | undefined>();
   const [liveStockList, setLiveStockList] = useState<string[]>([]);
+  const [selectedLivestock, setSelectedLivestock] = useState<string>(''); 
   const [selectedEnergy1, setSelectedEnergy1] = useState<string | undefined>();
   const [selectedEnergy2, setSelectedEnergy2] = useState<string | undefined>();
   const [selectedProtein1, setSelectedProtein1] = useState<string | undefined>();
   const [selectedProtein2, setSelectedProtein2] = useState<string | undefined>();
   const [ingredientQuantities, setIngredientQuantities] = useState<{ [key: string]: number }>({});
+  
 
-  //determine when the stage selected was fish to disabled the another selection to stage
+  //function to filter other ingredients for pre-starter and starter of chicken
+  const restrictedProtein = Protein.filter((item) => {
+    if (selectedLiveStock === "Chicken" && (selectedStage === "Pre-Starter" || selectedStage === "Starter")) {
+      return item.title !== "Copra Meal" && item.title !== "Fish Meal";
+    }
+    return true;
+  });
+  
+  
+  //function to delete specific ingredients from calculation
+  const handleDeleteIngredient = (ingredient: string) => {
+    Alert.alert(
+      "Confirm Deletion",
+      `Are you sure you want to delete ${ingredient}?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            const updatedQuantities = { ...ingredientQuantities };
+            delete updatedQuantities[ingredient];
+            setIngredientQuantities(updatedQuantities);
+          },
+        },
+      ]
+    );
+  };
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,10 +123,20 @@ const Calculate = () => {
   }, [db]);
 
   // Function to get the target crude protein for the selected stage
-  const getTargetProtein = (stage: string) => {
-    const selectedStage = Stage.find((item) => item.stage === stage);
-    return selectedStage ? selectedStage.targetProtein : 'N/A';
-  };
+const getTargetProtein = (livestock: string, stage: string) => {
+  const selectedStage = Stage.find((item) => item.stage === stage);
+  
+  if (!selectedStage) return 'N/A';
+
+  switch (livestock) {
+    case 'Chicken':
+      return selectedStage.targetProteinChicken;
+    case 'Pig':
+      return selectedStage.targetProteinPig;
+    default:
+      return 'N/A';
+  }
+};
 
   // Filter energy and protein ingredients for the second picker
   const filteredEnergy = Energy.filter((item) => item.title !== selectedEnergy1);
@@ -131,7 +179,7 @@ const Calculate = () => {
             return calculateKakawatiEnergy(weight);
         case 'Gabi':
             return calculateGabiEnergy(weight);
-        case 'Madre De Agua':
+        case 'Madre de Agua':
             return calculateMadreDeAguaEnergy(weight);
         case 'Indigofera':
             return calculateIndigoferaEnergy(weight);
@@ -148,35 +196,57 @@ const Calculate = () => {
   const calculateCrudeProtein = () => {
     let totalProtein = 0;
     let totalWeight = 0;
-  
     for (const ingredient in ingredientQuantities) {
       const weight = ingredientQuantities[ingredient];
       totalProtein += calculateIngredientCrudeProtein(ingredient, weight);
-      totalWeight += weight; // Sum all weights
     }
-  
-    // Normalize total protein by total weight to get percentage
-    const crudeProteinPercentage = totalWeight > 0 ? (totalProtein / totalWeight) * 100 : 0;
-  
-    return crudeProteinPercentage.toFixed(2);
+    return totalProtein.toFixed(2);
   };
   
 
   const checkCrudeProtein = () => {
     const totalProtein = parseFloat(calculateCrudeProtein());
   
-    // Find the selected stage's protein range
+    // Find the selected stage's data
     const selectedStageData = Stage.find((item) => item.stage === selectedStage);
   
     if (!selectedStageData) {
       return `Invalid stage selected. Please select a valid stage.`;
     }
   
-    // Parse the targetProtein range (e.g., "18-20%" to { min: 18, max: 20 })
-    const [min, max] = selectedStageData.targetProtein
-      .replace('%', '') // Remove the percentage sign
-      .split('-') // Split into min and max values
-      .map(Number); // Convert to numbers
+    // Determine which targetProtein to use based on the selected livestock
+    let targetProteinRange;
+    switch (selectedLiveStock) {
+      case 'Chicken':
+        targetProteinRange = selectedStageData.targetProteinChicken;
+        break;
+      case 'Pig':
+        targetProteinRange = selectedStageData.targetProteinPig;
+        break;
+      default:
+        return `Invalid livestock selected. Please select a valid livestock.`;
+    }
+  
+    // Validate the targetProteinRange to avoid potential issues
+    if (!targetProteinRange || typeof targetProteinRange !== 'string') {
+      return `Target protein range not found for the selected stage and livestock.`;
+    }
+  
+    // ✅ Parse the target protein range safely (e.g., "18-20%" to { min: 18, max: 20 })
+    const parseTargetProteinRange = (range: string) => {
+      const [min, max] = range
+        .replace(/%/g, '') // Remove all percentage signs
+        .split('-') // Split into min and max values
+        .map((value) => parseFloat(value.trim())); // Trim and convert to numbers
+  
+      if (isNaN(min) || isNaN(max)) {
+        return { min: 0, max: 0 };
+      }
+  
+      return { min, max };
+    };
+  
+    const { min, max } = parseTargetProteinRange(targetProteinRange);
   
     // Check if the total protein is within the range
     if (totalProtein < min) {
@@ -184,6 +254,7 @@ const Calculate = () => {
     } else if (totalProtein > max) {
       return `The total crude protein (${totalProtein}%) is higher than the targeted crude protein range (${min}% - ${max}%). Please consider lowering the quantity of one or more ingredients.`;
     }
+  
     // If it's within the range
     return `The total crude protein (${totalProtein}%) meets the targeted crude protein range (${min}% - ${max}%).`;
   };
@@ -206,196 +277,224 @@ const Calculate = () => {
     <ScrollView className="flex-1 mt-10 bg-green-800 w-full h-[100%] ">
       <View className="bg-green-600 p-4 rounded-b-3xl shadow-lg">
               <Text className="text-2xl font-JakartaBold text-white text-center">Make Your Calculation!</Text>
-            </View>
-      <SafeAreaView>
-        <View className="p-5 ml-5 mr-5 mt-2 bg-white rounded-lg border border-gray-400 shadow-sm shadow-black">
-          <Text className="text-lg font-bold font-JakartaMedium mb-3 text-center mt-8 text-green-700 shadow-md">
-            Select Live Stock & Stage
-          </Text>
-
-          {/* Livestock and Stage Dropdowns */}
-          <View className="flex-row justify-between mb-5 mt-5">
-            <View className="flex-1 border border-black rounded-lg bg-gray-100 mr-2 p-2 shadow-sm">
-              <Picker
-                selectedValue={selectedLiveStock}
-                onValueChange={(itemValue: string) => setSelectedLiveStock(itemValue)}
-                style={{ height: 50 }}
-              >
-                <Picker.Item label="Select LiveStock" value="" />
-                {liveStockList.map((item, index) => (
-                  <Picker.Item label={item} value={item} key={index} />
-                ))}
-              </Picker>
-            </View>
-
-            <View className="flex-1 border border-black rounded-lg bg-gray-100 p-2">
-              <Picker
-                selectedValue={selectedStage}
-                onValueChange={(itemValue: string) => setSelectedStage(itemValue)}
-                style={{ height: 50 }}
-              >
-                <Picker.Item label="Select Stage" value="" />
-                {Stage.map((item) => (
-                  <Picker.Item key={item.id} label={item.stage} value={item.stage} />
-                ))}
-              </Picker>
-            </View>
-            
-          </View>
-
-          {/* Display Target Protein */}
-          {selectedStage && (
-            <Text className="text-md text-center text-gray-600">
-              Targeted Crude Protein for {selectedStage}: {getTargetProtein(selectedStage)}
+      </View>
+        <SafeAreaView>
+          <View className="p-5 ml-5 mr-5 mt-2 bg-white rounded-lg border border-gray-400 shadow-sm shadow-black">
+            <Text className="text-lg font-bold font-JakartaMedium mb-3 text-center mt-2 text-green-700 shadow-black shadow-xl">
+              Select LiveStock & Stage
             </Text>
-          )}
 
-          {/* Energy Source Selection */}
-          <View className="mt-10 px-4">
-            <Text className="text-md font-JakartaMedium text-center mb-2 text-green-800">
-              Select Ingredients For Energy Source
-            </Text>
-            <View className="flex-wrap flex-row justify-between">
-              <View className="w-[48%] mb-4">
+            {/* Livestock and Stage Dropdowns */}
+            <View className="flex-row justify-between mb-5 mt-2">
+              {/* LiveStock Picker */}
+                  <View className="flex-1 border border-black rounded-lg bg-green-100 mr-2 p-2 shadow-sm">
+                  <Picker
+                    selectedValue={selectedLiveStock}
+                    onValueChange={(itemValue: string) => setSelectedLiveStock(itemValue)}
+                    style={{ height: 50, width: 153}}
+                  >
+                      <Picker.Item label="Live Stock" value="" />
+                      {liveStockList.map((item, index) => (
+                        <Picker.Item label={item} value={item} key={index} />
+                      ))}
+                  </Picker>
+                </View>
+
+              {/* Stage Picker */}
+              <View className="flex-1 border border-black rounded-lg bg-green-100 p-2">
                 <Picker
-                  selectedValue={selectedEnergy1}
-                  onValueChange={(itemValue: string) => {
-                    setSelectedEnergy1(itemValue);
-                    if (itemValue === selectedEnergy2) setSelectedEnergy2(undefined);
-                  }}
-                  style={{ height: 50 }}
-                  className="border border-green-400 rounded-lg bg-gray-100"
+                  selectedValue={selectedStage}
+                  onValueChange={(itemValue: string) => setSelectedStage(itemValue)}
+                  style={{ height: 50, width: 153 }}
                 >
-                  <Picker.Item label="Ingredients" value="" />
-                  {Energy.map((item) => (
-                    <Picker.Item key={item.id} label={item.title} value={item.title} />
+                  <Picker.Item label="Stage" value="" />
+                  {/* Dynamically render stages based on selectedLiveStock */}
+                  {Stage.filter((item) => {
+                    if (selectedLiveStock === "Chicken") {
+                      return true; // Show all stages for Chicken
+                    }
+                    if (selectedLiveStock === "Pig") {
+                      // Exclude Pre-Starter for Pig
+                      return item.stage !== "Pre-Starter";
+                    }
+                    return false; // Default to false for unhandled cases
+                  }).map((item) => (
+                    <Picker.Item key={item.id} label={item.stage} value={item.stage} />
                   ))}
                 </Picker>
               </View>
 
-              <View className="w-[48%] mb-4">
-                <Picker
-                  selectedValue={selectedEnergy2}
-                  onValueChange={(itemValue: string) => setSelectedEnergy2(itemValue)}
-                  style={{ height: 50 }}
-                  className="border border-green-400 rounded-lg bg-gray-100"
-                >
-                  <Picker.Item label="Ingredients" value="" />
-                  {filteredEnergy.map((item) => (
-                    <Picker.Item key={item.id} label={item.title} value={item.title} />
-                  ))}
-                </Picker>
+            </View>
+
+
+            {/* Display Target Protein */}
+            {selectedStage && selectedLiveStock && (
+              <Text className="text-lg text-center text-black">
+                Targeted Crude Protein for {selectedStage}: {getTargetProtein(selectedLiveStock, selectedStage)}
+              </Text>
+            )}
+
+            {/* Energy Source Selection */}
+            <View className="mt-7 px-4">
+              <Text className="text-md font-bold font-JakartaMedium text-center mb-2 text-green-700">
+                Select Ingredients For Energy Source
+              </Text>
+
+              <View className="flex-col">
+                {/* First Picker */}
+                <View className="w-full mb-4">
+                  <Picker
+                    selectedValue={selectedEnergy1}
+                    onValueChange={(itemValue: string) => {
+                      setSelectedEnergy1(itemValue);
+                      if (itemValue === selectedEnergy2) setSelectedEnergy2(undefined);
+                    }}
+                    style={{ height: 50 }}
+                    className="border"
+                    itemStyle={{ fontSize: 10, textAlign: 'left' }}
+                  >
+                    <Picker.Item label="Select an ingredient" value="" />
+                    {Energy.map((item) => (
+                      <Picker.Item key={item.id} label={item.title} value={item.title} />
+                    ))}
+                  </Picker>
+                </View>
+
+                {/* Second Picker */}
+                <View className="w-full mb-4">
+                  <Picker
+                    selectedValue={selectedEnergy2}
+                    onValueChange={(itemValue: string) => setSelectedEnergy2(itemValue)}
+                    style={{ height: 50 }}
+                    className="border border-green-400 rounded-lg bg-gray-100"
+                    itemStyle={{ fontSize: 10, textAlign: 'left' }}
+                  >
+                    <Picker.Item label="Select an ingredient" value="" />
+                    {filteredEnergy.map((item) => (
+                      <Picker.Item key={item.id} label={item.title} value={item.title} />
+                    ))}
+                  </Picker>
+                </View>
               </View>
             </View>
-          </View>
 
-          {/* Protein Source Selection */}
-          <View className="mt-10 px-4">
-            <Text className="text-md font-JakartaMedium text-center mb-2 text-green-800">
-              Select Ingredients For Protein Source
-            </Text>
-            <View className="flex-wrap flex-row justify-between">
-              <View className="w-[48%] mb-4">
+            {/* Protein Source Selection */}
+            <View className="mt-2 px-4">
+              <Text className="text-md font-bold font-JakartaMedium text-center mb-2 text-green-700">
+                Select Ingredients For Protein Source
+              </Text>
+              
+              {/* Stacked pickers */}
+              <View className="w-full mb-4">
                 <Picker
                   selectedValue={selectedProtein1}
-                  onValueChange={(itemValue: string) => {
+                  onValueChange={(itemValue: string | undefined) => {
                     setSelectedProtein1(itemValue);
                     if (itemValue === selectedProtein2) setSelectedProtein2(undefined);
                   }}
                   style={{ height: 50 }}
                   className="border border-green-200 rounded-lg bg-gray-100"
+                  itemStyle={{ fontSize: 10, textAlign: 'left' }}
                 >
-                  <Picker.Item label="Ingredients" value="" />
-                  {Protein.map((item) => (
+                  <Picker.Item label="Select an ingredient" value={undefined} />
+                  {restrictedProtein.map((item) => (
                     <Picker.Item key={item.id} label={item.title} value={item.title} />
                   ))}
                 </Picker>
               </View>
 
-              <View className="w-[48%] mb-4">
+              <View className="w-full mb-4">
                 <Picker
                   selectedValue={selectedProtein2}
-                  onValueChange={(itemValue: string) => setSelectedProtein2(itemValue)}
+                  onValueChange={(itemValue: string | undefined) => setSelectedProtein2(itemValue)}
                   style={{ height: 50 }}
-                  className="border border-green-200 rounded-lg bg-gray-100"
+                  className="border border-black rounded-lg bg-gray-100"
+                  itemStyle={{ fontSize: 10, textAlign: 'left' }}
                 >
-                  <Picker.Item label="Ingredients" value="" />
-                  {filteredProtein.map((item) => (
+                  <Picker.Item label="Select an ingredient" value={undefined} />
+                  {restrictedProtein.map((item) => (
                     <Picker.Item key={item.id} label={item.title} value={item.title} />
                   ))}
                 </Picker>
               </View>
-            </View>
-          </View>
 
-            <View className="mt-5 px-2">
+            </View>
+
+            
+            {/* Component for inputs */}
+            <View className="mt-4 px-4">
               <Text className="text-md font-JakartaMedium text-center mb-2 text-green-800">
                 Enter Quantity for Selected Ingredients
-                  </Text>
-            <View className="flex-col">
-            {[selectedEnergy1, selectedEnergy2, selectedProtein1, selectedProtein2]
-              .filter(Boolean)
-              .map((ingredient) => (
-                <View key={ingredient} className="mb-4">
-                  <IngredientQuantityInput
-                    selectedIngredient={ingredient!}
-                    onQuantityChange={(weight) => handleQuantityChange(ingredient!, weight)}
-                  />
-                </View>
-              ))}
-          </View>
-        </View>
+              </Text>
+              <View>
+                {[selectedEnergy1, selectedEnergy2, selectedProtein1, selectedProtein2]
+                  .filter(Boolean)
+                  .map((ingredient) => (
+                    <View key={ingredient} className="mb-4">
+                      <IngredientQuantityInput
+                        selectedIngredient={ingredient!}
+                        onQuantityChange={(weight) => handleQuantityChange(ingredient!, weight)}
+                      />
+                    </View>
+                  ))}
+              </View>
+            </View>
 
-
-            {/* Display Shared Crude Protein and Total Average */}
-            {Object.keys(ingredientQuantities).length > 0 && (
-              <View className="mt-8 px-4 py-4 bg-blue-100 rounded-md shadow-lg">
-                <Text className="text-lg font-JakartaMedium text-green-800 mb-4 text-center">
-                  Your Recipe
-                </Text>
-
-                {/* Display Selected Livestock, Stage, and Target Crude Protein */}
-                <View className="mb-4">
-                  <Text className="text-md font-JakartaMedium text-gray-800 text-center">
-                    Selected Livestock: {selectedLiveStock || "None"}
+              {/* Display Shared Crude Protein and Total Average */}
+              {Object.keys(ingredientQuantities).length > 0 && (
+                <View className="mt-8 px-4 py-4 bg-blue-100 rounded-md shadow-lg">
+                  <Text className="text-lg font-bold font-JakartaMedium text-green-800 mb-4 text-center">
+                    Your Recipe
                   </Text>
-                  <Text className="text-md font-JakartaMedium text-gray-800 text-center">
-                    Selected Stage: {selectedStage || "None"}
+
+                  {/* Display Selected Livestock, Stage, and Target Crude Protein */}
+                  <View className="mb-4">
+                  <Text className="text-lg font-JakartaMedium text-black text-center">
+                    Livestock: {selectedLiveStock || "None"}
                   </Text>
-                  {selectedStage && (
-                    <Text className="text-md font-JakartaMedium text-gray-800 text-center">
-                      Target Crude Protein for {selectedStage}: {getTargetProtein(selectedStage)}
+                  <Text className="text-lg font-JakartaMedium text-black text-center">
+                    Stage: {selectedStage || "None"}
+                  </Text>
+                  {selectedLiveStock && selectedStage && (
+                    <Text className="text-lg font-JakartaMedium text-black text-center">
+                      Target Crude Protein for {selectedStage}: {getTargetProtein(selectedLiveStock, selectedStage)}
                     </Text>
                   )}
                 </View>
-                <Text style={{ fontSize: 15 }} className="font-JakartaMedium text-green-800 mb-4 text-center">
-                Shared Crude Protein per Ingredient
-                </Text>
+                  <Text style={{ fontSize: 20 }} className="font-JakartaMedium font-bold  text-green-800 mb-4 text-center">
+                  Shared Crude Protein per Ingredient
+                  </Text>
 
-                <View>
-                  {Object.entries(ingredientQuantities).map(([ingredient, weight]) => {
-                    // Get the crude protein per ingredient based on its weight
-                    const sharedCrudeProtein = calculateIngredientCrudeProtein(ingredient, weight);
+                  <View>
+                    {Object.entries(ingredientQuantities).map(([ingredient, weight]) => {
+                      // Get the crude protein per ingredient based on its weight
+                      const sharedCrudeProtein = calculateIngredientCrudeProtein(ingredient, weight);
 
-                    return (
-                      <View key={ingredient} className="flex-row justify-between mb-2">
-                        <Text className="text-md font-JakartaMedium text-gray-600">{ingredient}:</Text>
-                        <Text className="text-md font-JakartaMedium text-gray-800">
-                          {weight}kg - {sharedCrudeProtein.toFixed(2)}%
-                        </Text>
-                      </View>
-                    );
-                  })}
-                </View>
+                      return (
+                        <View key={ingredient} className="flex-row justify-between mb-2">
+                          <Text className="text-md font-JakartaMedium text-gray-600">{ingredient}:</Text>
+                          <Text className="text-md font-JakartaMedium text-gray-800">
+                            {weight}kg - {sharedCrudeProtein.toFixed(2)}%
+                          </Text>
+                          <TouchableOpacity
+                            className="bg-red-500 p-1 rounded-md"
+                            onPress={() => handleDeleteIngredient(ingredient)}
+                          >
+                            <Text className="text-white">Delete</Text>
+                          </TouchableOpacity>
+                        </View>
+                      );
+                    })}
+                  </View>
 
-                <View className="mt-4 border-t border-gray-300 pt-4">
+                  <View className="mt-4 border-t border-gray-300 pt-4">
                   {/* Display Total Weight */}
-                  <Text className="text-md font-JakartaMedium text-center text-gray-800">
+                  <Text className="text-lg font-JakartaMedium text-center text-gray-800">
                     Total Weight: {Object.values(ingredientQuantities).reduce((sum, weight) => sum + weight, 0)} kg
                   </Text>
 
                   {/* Display Total Average Shared Crude Protein */}
-                  <Text className="text-md font-JakartaMedium text-center text-gray-800 mb-5">
+                  <Text className="text-lg font-JakartaMedium text-center text-black mb-5">
                     Total Average Shared Crude Protein: {(() => {
                       const totalWeight = Object.values(ingredientQuantities).reduce((sum, weight) => sum + weight, 0);
                       const totalSharedCrudeProtein = Object.entries(ingredientQuantities).reduce(
@@ -410,44 +509,40 @@ const Calculate = () => {
                   </Text>
                 </View>
 
-                {/* Display Crude Protein Check Result */}
-                <Text>{checkCrudeProtein()}</Text>
-              </View>
-            )}
-
-
-          <View className="flex-1 justify-center items-center p-4">
-            <View className="flex-row space-x-4">
-              {/* Calculate Button */}
+                  {/* Display Crude Protein Check Result */}
+                  <Text>{checkCrudeProtein()}</Text>
+                </View>
+              )}
+              
+            <View className="flex-1 justify-center items-center p-4">
+              <View className="flex-row space-x-4">
+                {/* Calculate Button */}
                 <TouchableOpacity
-                  onPress={() => {
-                    if (selectedLiveStock && selectedStage) {
-                      Alert.alert(
-                        "Preparation",
-                          FeedPreparationGuide
-                      );
-                    } else {
-                      Alert.alert("Error", "Please select both livestock and stage.");
-                    }
-                  }}
-                  className="mt-6 px-4 py-2 bg-blue-500 rounded"
-                >
-                <Text className="text-white font-medium">PREPARATION</Text>
-              </TouchableOpacity>    
-
-              {/* Reset Button */}
-              <TouchableOpacity
-                onPress={resetSelections}
-                className="mt-6 px-4 py-2 bg-red-500 rounded"
+                onPress={() => {
+                  if (selectedLiveStock && selectedStage) {
+                    Alert.alert("Preparation", FeedPreparationGuide);
+                  } else {
+                    Alert.alert("Error", "Please select both livestock and stage.");
+                  }
+                }}
+                className="mt-6 px-4 py-2 bg-blue-500 rounded"
               >
-                <Text className="text-white font-medium">RESET</Text>
+                <Text className="text-white font-medium">PREPARATION</Text>
               </TouchableOpacity>
-            </View>
-          </View>
 
-        </View>
-      </SafeAreaView>
-      <Footer/>
+                {/* Reset Button */}
+                <TouchableOpacity
+                  onPress={resetSelections}
+                  className="mt-6 px-4 py-2 bg-red-500 rounded"
+                >
+                  <Text className="text-white font-medium">RESET</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+          </View>
+        </SafeAreaView>
+        <Footer/>
     </ScrollView>
   );
 };

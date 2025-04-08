@@ -16,8 +16,8 @@ export const Faq = [
     },
     {
         id: 4,
-        title: 'Can I use this app offline?',
-        content: 'Yes, the app is designed to be used offline, so you can still calculate and manage your feed formulations without an internet connection.'
+        title: 'what is crude protein requirments?',
+        content: 'A recommended protein percentages in an animals diet during different growth or production stages,It ensure animals healthy growth, reproduction, and helping farmers balance costs and minimize waste.'
     }
 ];
 
